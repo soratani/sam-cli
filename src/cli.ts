@@ -9,7 +9,7 @@ const bootstrap = () => {
         .version(
             require('../package.json').version,
             '-v, --version',
-            '输出当前版本.',
+            '输出当前包版本.',
         )
         .usage('<command> [options]')
         .helpOption('-h, --help', '帮助信息.');
