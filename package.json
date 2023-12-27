@@ -43,7 +43,7 @@
     "@types/yaml": "^1.9.7",
     "ali-oss": "^6.17.1",
     "chalk": "5.3.0",
-    "commander": "^10.0.1",
+    "commander": "^11.1.0",
     "cos-nodejs-sdk-v5": "^2.12.1",
     "glob": "^10.2.6",
     "joi": "^17.9.2",
@@ -55,7 +55,7 @@
   "peerDependencies": {
     "ali-oss": "^6.17.1",
     "chalk": "5.3.0",
-    "commander": "^10.0.1",
+    "commander": "^11.1.0",
     "cos-nodejs-sdk-v5": "^2.12.1",
     "glob": "^10.2.6",
     "joi": "^17.9.2",
