@@ -28,15 +28,8 @@ jobs:
       - name: Install dependencies
         run: npm install --force
 
-      # 安装资源上传脚本
-      - name: Install envs-cli
-        run: npm install envs-cli@1.1.6 -g
-
       - name: Package build
         run: npm run build
-
-      - name: Upload assets cos
-        run: envs-cli upload -id ${{secrets.SECRET_ID}} -key ${{secrets.SECRET_KEY}}
 
       - name: Creating .npmrc
         run: |
