@@ -8,6 +8,7 @@
     "version": "changeset version"
   },
   "main": "lib/index.js",
+  "type": "module",
   "typings": "lib/index.d.ts",
   "bin": {
     "assets-cli": "./bin/bin"
