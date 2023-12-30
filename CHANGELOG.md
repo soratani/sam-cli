@@ -1,5 +1,11 @@
 # @frade-sam/assets-cli
 
+## 0.0.5
+
+### Patch Changes
+
+- fda7478: 0.0.5
+
 ## 0.0.4
 
 ### Patch Changes
