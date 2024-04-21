@@ -5,7 +5,7 @@
   "scripts": {
     "build": "rm -rf lib && tsc -p tsconfig.json",
     "changeset": "changeset",
-    "version": "changeset version"
+    "version": "changeset version && pnpm install"
   },
   "main": "lib/index.js",
   "typings": "lib/index.d.ts",
