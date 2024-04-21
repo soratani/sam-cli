@@ -1,11 +1,16 @@
 import { extname } from "path";
 import { get } from 'lodash';
 import * as joi from 'joi';
+import { Logger } from "../ui/logger";
 
 const IpSchema = joi.object().keys({
     host: joi.string().required(),
     port: joi.alternatives().try(joi.string(), joi.number()).required()
 });
+const PkgSchema = joi.object().keys({
+    input: joi.string().required(),
+    output: joi.string().required(),
+}).required();
 
 const AssetsSchema = joi.object().keys({
     type: joi.array().items(joi.string().valid('cos', 'ssh').default('ssh')).required(),
@@ -20,6 +25,7 @@ const CosSchema = joi.object().keys({
 })
 
 const schema = joi.object({
+    package: PkgSchema,
     ssh: joi.array().ordered(IpSchema),
     cos: CosSchema,
     assets: joi.array().items(AssetsSchema).required()
@@ -40,6 +46,6 @@ export function check(config) {
         convert: false
     });
     const message = get(error, 'details.0.message')
-    if (message) throw new Error(message);
+    if (message) Logger.error(message);
     return value;
 }

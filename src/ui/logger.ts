@@ -1,4 +1,4 @@
-import * as colors from 'chalk';
+import colors from 'chalk';
 
 export const ERROR_PREFIX = colors.bgRgb(210, 0, 75).bold.rgb(0, 0, 0)('ERROR');
 export const INFO_PREFIX = colors.bgRgb(35, 187, 110).bold.rgb(0, 0, 0)('INFO');

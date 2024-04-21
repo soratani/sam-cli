@@ -1,4 +1,4 @@
-import * as commander from 'commander';
+import commander from 'commander';
 import { Command } from 'commander';
 import { loadLocalBinCommandLoader, localBinExists } from './utils/local-binaries';
 import { CommandLoader } from './command';

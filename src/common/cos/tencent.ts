@@ -1,4 +1,4 @@
-import * as COS from 'cos-nodejs-sdk-v5';
+import COS from 'cos-nodejs-sdk-v5';
 import { AbstractCos } from './abstract.cos';
 import { createReadStream, createWriteStream } from 'fs';
 

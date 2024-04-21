@@ -1,13 +1,15 @@
 import { Command } from "commander";
 import { Logger } from "../ui/logger";
 import { DownloadCommand } from "./download.command";
-import { DownloadAction, UploadAction } from "../action";
+import { CompressAction, DownloadAction, UploadAction } from "../action";
 import { UploadCommand } from "./upload.command";
+import { CompressCommand } from "./compress.command";
 
 export class CommandLoader {
     public static load(program: Command): void {
         new DownloadCommand(new DownloadAction()).load(program);
         new UploadCommand(new UploadAction()).load(program);
+        new CompressCommand(new CompressAction()).load(program);
         this.handleInvalidCommand(program);
     }
 

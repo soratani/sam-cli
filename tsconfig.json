@@ -1,12 +1,13 @@
 {
   "compilerOptions": {
-    "module": "UMD",
+    "module": "NodeNext",
     "declaration": true,
     "noImplicitAny": false,
     "removeComments": true,
     "noLib": false,
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
+    "moduleResolution":"NodeNext",
     "target": "es6",
     "sourceMap": false,
     "outDir": "./lib",
