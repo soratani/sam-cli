@@ -3,7 +3,7 @@
   "version": "0.0.7",
   "description": "",
   "scripts": {
-    "build": "rm -rf lib && tsc -p tsconfig.json",
+    "build": "rm -rf lib && tsc -p tsconfig.json && tsc-alias",
     "changeset": "changeset",
     "version": "changeset version && pnpm install"
   },
@@ -51,6 +51,7 @@
     "joi": "^17.9.2",
     "lodash": "^4.17.21",
     "ssh2-sftp-client": "^9.1.0",
+    "tsc-alias": "^1.8.8",
     "typescript": "^5.0.4",
     "yaml": "^2.2.2"
   },

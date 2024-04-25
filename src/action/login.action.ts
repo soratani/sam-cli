@@ -1,9 +1,8 @@
-import os from "os";
-import { Input } from "../command";
-import { Logger } from "../ui/logger";
-import api, { fingerprint, setCredential } from "../utils/api";
-import { AbstractAction } from "./abstract.action";
 import { get } from "lodash";
+import { Input } from "@/command";
+import { Logger } from "@/ui/logger";
+import api, { setCredential } from "@/utils/api";
+import { AbstractAction } from "@/action";
 
 export class LoginAction extends AbstractAction {
   public async handle(

@@ -1,15 +1,12 @@
 import { Command } from "commander";
-import { Logger } from "../ui/logger";
-import { DownloadCommand } from "./download.command";
+import { Logger } from "@/ui/logger";
+import { DownloadCommand, UploadCommand, CompressCommand, LoginCommand } from "@/command";
 import {
   CompressAction,
   DownloadAction,
   LoginAction,
   UploadAction,
-} from "../action";
-import { UploadCommand } from "./upload.command";
-import { CompressCommand } from "./compress.command";
-import { LoginCommand } from "./login.commond";
+} from "@/action";
 
 export class CommandLoader {
   public static load(program: Command): void {

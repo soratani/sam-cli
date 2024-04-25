@@ -2,12 +2,12 @@ import { existsSync, readFileSync } from "fs";
 import { get } from 'lodash';
 import { join } from "path";
 import * as yaml from 'yaml';
-import { Input } from "../command";
-import { AbstractAction } from "./abstract.action";
-import { check, isYaml } from "../utils/check-config";
-import { Logger } from "../ui/logger";
-import { COS, CosType } from "../common/cos";
-import { sshUpload } from "../common/ssh";
+import { Input } from "@/command";
+import { AbstractAction } from "@/action";
+import { check, isYaml } from "@/utils/check-config";
+import { Logger } from "@/ui/logger";
+import { COS, CosType } from "@/common/cos";
+import { sshUpload } from "@/common/ssh";
 
 export class UploadAction extends AbstractAction {
 
