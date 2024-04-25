@@ -1,5 +1,11 @@
 # @frade-sam/assets-cli
 
+## 0.0.8
+
+### Patch Changes
+
+- b8235fe: 0.0.8
+
 ## 0.0.6
 
 ### Patch Changes
