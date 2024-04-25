@@ -1,5 +1,5 @@
 import Client from 'ssh2-sftp-client'
-import { Logger } from '../../ui/logger'
+import { Logger } from '../../utils/logger'
 
 export interface ClientOption extends Client.ConnectOptions { }
 

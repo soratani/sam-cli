@@ -36,7 +36,7 @@ export interface IRes {
   data?: any;
 }
 
-const api = axios.create({
+export const api = axios.create({
   baseURL: process.env.HOST,
   headers: {
     version: pkg.version,
@@ -65,5 +65,3 @@ api.interceptors.response.use(
     return get(error, "response.data", { code: 500, message: "服务异常" });
   }
 );
-
-export default api;

@@ -1,7 +1,7 @@
 import { extname } from "path";
 import { get } from "lodash";
 import Joi, * as joi from "joi";
-import { Logger } from "../ui/logger";
+import { Logger } from "./logger";
 
 const IpSchema = joi.object().keys({
   host: joi.string().required(),
@@ -56,7 +56,7 @@ export function isYaml(file: string) {
   return [".yaml", ".yml"].includes(name);
 }
 
-export function check(config) {
+export function checkConfig(config) {
   const { value, error } = schema.validate(config, {
     convert: false,
   });

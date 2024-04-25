@@ -1,8 +1,7 @@
 import { existsSync, readFileSync } from "fs";
 import * as yaml from 'yaml';
 import { Input } from "@/command";
-import { Logger } from "@/ui/logger";
-import { check, isYaml } from "@/utils/check-config";
+import { Logger, checkConfig, isYaml } from "@/utils";
 
 export abstract class AbstractAction {
 
@@ -11,7 +10,7 @@ export abstract class AbstractAction {
     if (!isYaml(file)) Logger.error('非yaml配置文件');
     const data = readFileSync(file).toString();
     const yamlData = yaml.parse(data);
-    return check(yamlData);
+    return checkConfig(yamlData);
   }
 
   public abstract handle(

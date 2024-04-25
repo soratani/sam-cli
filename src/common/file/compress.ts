@@ -8,7 +8,7 @@ import {
 import archiver from "archiver";
 import { get } from "lodash";
 import { join } from "path";
-import { Logger } from "../../ui/logger";
+import { Logger } from "../../utils/logger";
 
 function paths(_path: string, split = "/") {
   return _path.split(split).filter(Boolean);

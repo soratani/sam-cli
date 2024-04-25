@@ -2,7 +2,7 @@ import * as Client from 'ssh2-sftp-client'
 import * as glob from 'glob'
 import { join } from 'path'
 import { statSync } from 'fs'
-import { Logger } from '../../ui/logger'
+import { Logger } from '../../utils/logger'
 
 async function upload(client: Client, file: string, local: string, remote: string) {
   try {
