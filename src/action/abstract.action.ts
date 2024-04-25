@@ -1,8 +1,8 @@
 import { existsSync, readFileSync } from "fs";
 import * as yaml from 'yaml';
-import { Input } from "../command";
-import { Logger } from "../ui/logger";
-import { check, isYaml } from "../utils/check-config";
+import { Input } from "@/command";
+import { Logger } from "@/ui/logger";
+import { check, isYaml } from "@/utils/check-config";
 
 export abstract class AbstractAction {
 

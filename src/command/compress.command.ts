@@ -1,7 +1,6 @@
 import { Command } from "commander";
 import { get } from "lodash";
-import { AbstractCommand } from "./abstract.command";
-import { Input } from ".";
+import { AbstractCommand, Input } from "@/command";
 
 export class CompressCommand extends AbstractCommand {
   public load(program: Command): void {

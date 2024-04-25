@@ -1,9 +1,9 @@
 import { get } from 'lodash';
 import { join } from "path";
-import { Input } from "../command";
-import { AbstractAction } from "./abstract.action";
-import { Logger } from "../ui/logger";
-import { COS, CosType } from "../common/cos";
+import { Input } from "@/command";
+import { AbstractAction } from "@/action";
+import { Logger } from "@/ui/logger";
+import { COS, CosType } from "@/common/cos";
 
 export class DownloadAction extends AbstractAction {
     public async handle(inputs?: Input[], options?: Input[], extraFlags?: string[]): Promise<void> {

@@ -1,8 +1,8 @@
 import { existsSync } from "fs";
 import { join } from "path";
 import { Command } from "commander";
-import { AbstractAction } from "../action";
-import { Logger } from "../ui/logger";
+import { AbstractAction } from "@/action";
+import { Logger } from "@/ui/logger";
 
 
 const localBinPathSegments = [process.cwd(), 'node_modules', '.bin', 'envs-cli'];

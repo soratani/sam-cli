@@ -1,8 +1,7 @@
 import { Command } from "commander";
 import { get } from 'lodash';
-import { AbstractCommand } from "./abstract.command";
-import { Input } from "./command.input";
-import path = require("path");
+import { AbstractCommand, Input } from "@/command";
+import path from 'path';
 
 
 export class DownloadCommand extends AbstractCommand {

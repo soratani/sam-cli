@@ -1,7 +1,7 @@
 import commander from 'commander';
 import { Command } from 'commander';
-import { loadLocalBinCommandLoader, localBinExists } from './utils/local-binaries';
-import { CommandLoader } from './command';
+import { loadLocalBinCommandLoader, localBinExists } from '@/utils/local-binaries';
+import { CommandLoader } from '@/command';
 
 const bootstrap = () => {
     const program: Command = commander as unknown as Command;
