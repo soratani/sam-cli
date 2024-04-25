@@ -7,6 +7,7 @@ interface IParams {
 }
 
 export default function run(cmd: string, params: IParams) {
+  if (["login"].includes(cmd)) return Promise.reject("cmd 错误");
   const { credential, ..._params } = params;
   const args = Object.entries(_params)
     .filter((item) => !!item[1])
@@ -21,7 +22,7 @@ export default function run(cmd: string, params: IParams) {
     execFile(
       process.execPath,
       args,
-      { env: { CREDENTIAL: credential }, shell: false },
+      { env: { CREDENTIAL: credential }, cwd: process.cwd(), shell: false },
       (error, stdout, stderr) => {
         if (error || stderr) {
           reject(error.message || stderr.toString());

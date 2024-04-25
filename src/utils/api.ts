@@ -30,6 +30,12 @@ export function setCredential(value: string) {
   return fs.writeFileSync(credentialPath, value, { encoding: "utf-8" });
 }
 
+export interface IRes {
+  code: number;
+  message: string;
+  data?: any;
+}
+
 const api = axios.create({
   baseURL: "http://127.0.0.1:3000/api",
   headers: {
