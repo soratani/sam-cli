@@ -15,8 +15,11 @@ export function fingerprint() {
 
 export function getCredential() {
   const credentialPath = home.resolve("~/.samrc");
-  if (!fs.existsSync(credentialPath)) return "";
-  return fs.readFileSync(credentialPath, { encoding: "utf-8" });
+  if (!fs.existsSync(credentialPath)) return process.env.CREDENTIAL;
+  return (
+    process.env.CREDENTIAL ||
+    fs.readFileSync(credentialPath, { encoding: "utf-8" })
+  );
 }
 
 export function setCredential(value: string) {
