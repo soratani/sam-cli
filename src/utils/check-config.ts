@@ -7,11 +7,15 @@ const IpSchema = joi.object().keys({
   host: joi.string().required(),
   port: joi.alternatives().try(joi.string(), joi.number()).required(),
 });
-const PkgSchema = joi.object().keys({
-  type: Joi.string().valid("package", "app").default("app"),
-  input: joi.string().required(),
-  output: joi.string().required(),
-});
+const PkgSchema = joi
+  .object()
+  .keys({
+    name: Joi.string().required(),
+    input: joi.string().required(),
+    output: joi.string().required(),
+    json: joi.string().required(),
+  })
+  .required();
 
 const AssetsSchema = joi.object().keys({
   type: joi
@@ -29,7 +33,7 @@ const CosSchema = joi.object().keys({
 });
 
 const schema = joi.object({
-  package: PkgSchema,
+  packages: joi.array().items(PkgSchema),
   ssh: joi.array().ordered(IpSchema),
   cos: CosSchema,
   assets: joi.array().items(AssetsSchema).required(),
@@ -38,6 +42,13 @@ const schema = joi.object({
 interface IP {
   host: string;
   port: string | number;
+}
+
+export interface IPkg {
+  name: string;
+  input: string;
+  output: string;
+  json: string;
 }
 
 export function isYaml(file: string) {
