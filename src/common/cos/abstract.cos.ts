@@ -1,6 +1,6 @@
 import { existsSync, mkdirSync, promises, statSync, unlinkSync } from "fs";
 import { join } from "path";
-import { Logger } from "../../ui/logger";
+import { Logger } from "../../utils/logger";
 
 export abstract class AbstractCos<C = any> {
   constructor(

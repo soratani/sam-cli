@@ -4,10 +4,8 @@ import { createReadStream, statSync } from "fs";
 import FormData from "form-data";
 import { Input } from "@/command";
 import { AbstractAction } from "@/action";
-import { Logger } from "@/ui/logger";
+import { Logger, api, IRes, IPkg  } from "@/utils";
 import { IPackage, zip } from "@/common/file";
-import api, { IRes } from "@/utils/api";
-import { IPkg } from "@/utils/check-config";
 
 export class CompressAction extends AbstractAction {
   private async zipPackage(packages: IPkg[]) {

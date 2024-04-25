@@ -2,7 +2,7 @@ import { get } from 'lodash';
 import { join } from "path";
 import { Input } from "@/command";
 import { AbstractAction } from "@/action";
-import { Logger } from "@/ui/logger";
+import { Logger } from "@/utils";
 import { COS, CosType } from "@/common/cos";
 
 export class DownloadAction extends AbstractAction {

@@ -1,6 +1,6 @@
 import commander from 'commander';
 import { Command } from 'commander';
-import { loadLocalBinCommandLoader, localBinExists } from '@/utils/local-binaries';
+import { loadLocalBinCommandLoader, localBinExists } from '@/utils';
 import { CommandLoader } from '@/command';
 
 const bootstrap = () => {

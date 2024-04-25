@@ -1,4 +1,4 @@
-import { Logger } from "../../ui/logger";
+import { Logger } from "../../utils/logger";
 import { ClientOption, setupClient } from "./client";
 import { uploadFile } from "./upload";
 

@@ -1,7 +1,6 @@
 import { get } from "lodash";
 import { Input } from "@/command";
-import { Logger } from "@/ui/logger";
-import api, { setCredential } from "@/utils/api";
+import { Logger, api, setCredential } from "@/utils";
 import { AbstractAction } from "@/action";
 
 export class LoginAction extends AbstractAction {

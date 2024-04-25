@@ -1,5 +1,5 @@
 import { Command } from "commander";
-import { Logger } from "@/ui/logger";
+import { Logger } from "@/utils";
 import { DownloadCommand, UploadCommand, CompressCommand, LoginCommand } from "@/command";
 import {
   CompressAction,

@@ -4,8 +4,7 @@ import { join } from "path";
 import * as yaml from 'yaml';
 import { Input } from "@/command";
 import { AbstractAction } from "@/action";
-import { check, isYaml } from "@/utils/check-config";
-import { Logger } from "@/ui/logger";
+import { Logger, checkConfig, isYaml } from "@/utils";
 import { COS, CosType } from "@/common/cos";
 import { sshUpload } from "@/common/ssh";
 
@@ -27,7 +26,7 @@ export class UploadAction extends AbstractAction {
                 const data = readFileSync(config).toString();
                 const isAll = [ssh, cos].every(s => !!s);
                 const yamlData = yaml.parse(data);
-                const value = check(yamlData);
+                const value = checkConfig(yamlData);
                 const sshData = get(value, 'ssh', []);
                 const cosData = get(value, 'cos');
                 const assets = get(value, 'assets', []);
