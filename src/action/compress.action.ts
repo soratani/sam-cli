@@ -8,7 +8,7 @@ import { Logger, api, IRes, IPkg, createPackageHash } from "@/utils";
 import { IPackage, zip } from "@/common/file";
 
 export class CompressAction extends AbstractAction {
-  private async createHash(packages: IPkg[]): Promise<IPkg[]> {
+  private async createHash(packages: IPkg[]): Promise<Required<IPkg>[]> {
     const dirs = packages
       .map((item) => {
         return {
@@ -34,16 +34,12 @@ export class CompressAction extends AbstractAction {
       )
       .catch(() => {
         Logger.error("文件hash生成失败");
-      }) as Promise<IPkg[]>;
+      }) as Promise<Required<IPkg>[]>;
   }
 
   private async zipPackage(packages: IPkg[]) {
     const data = await this.createHash(packages);
-    const res = await Promise.all(
-      data.map((item) =>
-        zip(item.name, item.json, item.hash, item.input, item.output)
-      )
-    );
+    const res = await Promise.all(data.map((item) => zip(item)));
     return res.filter((i) => !!i);
   }
 
