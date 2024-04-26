@@ -48,6 +48,7 @@ export interface IPkg {
   name: string;
   input: string;
   output: string;
+  hash?: string;
   json: string;
 }
 

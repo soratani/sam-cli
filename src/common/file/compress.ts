@@ -38,18 +38,24 @@ export interface IPackage {
   file: string;
 }
 
-export function zip(name: string, json: string, input: string, output: string) {
+export function zip(
+  name: string,
+  json: string,
+  hash: string,
+  input: string,
+  output: string
+) {
   const pkgjson = packageInfo(json);
   const version = get(pkgjson, "version");
   if (!version) return;
-  const outputPath = join(output, `${name}@${version}.zip`);
+  const outputPath = join(output, `${hash}.zip`);
   const outputStream = createWriteStream(outputPath);
   return new Promise<IPackage>((resolve) => {
     const archive = archiver("zip", {
       zlib: { level: 9 }, // Sets the compression level.
     });
     outputStream.on("close", function () {
-      Logger.info(`${name}@${version}.zip ${archive.pointer()} total bytes`);
+      Logger.info(`${hash}.zip ${archive.pointer()} total bytes`);
       Logger.info(`${name}压缩完毕`);
       resolve({
         name: name,
