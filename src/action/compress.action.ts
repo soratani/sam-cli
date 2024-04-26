@@ -56,12 +56,12 @@ export class CompressAction extends AbstractAction {
     });
   }
 
-  private async uploadPackages(packages: IPackage[]) {
-    return Promise.all(
-      packages.map((item) =>
-        this.uploadPackage(item.name, item.version, item.file)
-      )
-    ).then((value: IRes[]) => value.filter((i) => i.code !== 1));
+  private uploadPackages(packages: IPackage[]) {
+    return packages.reduce((pre: Promise<IRes>, item) => {
+      return pre
+        .then(() => this.uploadPackage(item.name, item.version, item.file))
+        .catch(() => this.uploadPackage(item.name, item.version, item.file));
+    }, Promise.resolve({ code: 500, message: "" }));
   }
 
   public async handle(
@@ -77,8 +77,8 @@ export class CompressAction extends AbstractAction {
       const files: IPackage[] = await this.zipPackage(pkgs);
       if (!files.length) Logger.error("压缩失败");
       Logger.info("准备上传");
-      const [task] = await this.uploadPackages(files);
-      if (task) {
+      const task = await this.uploadPackages(files);
+      if (task.code !== 1) {
         Logger.error(task.message);
       }
       Logger.info("上传资源包完毕");
