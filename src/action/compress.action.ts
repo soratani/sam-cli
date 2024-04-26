@@ -4,26 +4,45 @@ import { createReadStream, statSync } from "fs";
 import FormData from "form-data";
 import { Input } from "@/command";
 import { AbstractAction } from "@/action";
-import { Logger, api, IRes, IPkg  } from "@/utils";
+import { Logger, api, IRes, IPkg, createPackageHash } from "@/utils";
 import { IPackage, zip } from "@/common/file";
 
 export class CompressAction extends AbstractAction {
-  private async zipPackage(packages: IPkg[]) {
+  private async createHash(packages: IPkg[]): Promise<IPkg[]> {
     const dirs = packages
-      .map((item) => ({
-        ...item,
-        input: join(process.cwd(), item.input),
-        output: join(process.cwd(), item.output),
-        json: join(process.cwd(), item.json),
-      }))
+      .map((item) => {
+        return {
+          ...item,
+          input: join(process.cwd(), item.input),
+          output: join(process.cwd(), item.output),
+          json: join(process.cwd(), item.json),
+        };
+      })
       .filter(
         (item) =>
           statSync(item.input).isDirectory() &&
           statSync(item.output) &&
           statSync(item.json).isFile()
       );
+    return Promise.all(dirs.map((item) => createPackageHash(item.input)))
+      .then((items) =>
+        items.map((item, key) => {
+          const pkg = dirs[key];
+          Logger.info(`${pkg.name} hash: ${item}`);
+          return { ...pkg, hash: item };
+        })
+      )
+      .catch(() => {
+        Logger.error("文件hash生成失败");
+      }) as Promise<IPkg[]>;
+  }
+
+  private async zipPackage(packages: IPkg[]) {
+    const data = await this.createHash(packages);
     const res = await Promise.all(
-      dirs.map((item) => zip(item.name, item.json, item.input, item.output))
+      data.map((item) =>
+        zip(item.name, item.json, item.hash, item.input, item.output)
+      )
     );
     return res.filter((i) => !!i);
   }
