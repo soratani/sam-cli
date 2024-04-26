@@ -18,10 +18,12 @@ export class LoginAction extends AbstractAction {
     try {
       const data = await api.post("/auth/login", { account, password });
       const token = get(data, "data", "");
+      Logger.info(`TOKEN: ********`);
       const res = await api.post("/auth/credential", undefined, {
         headers: { authorization: token },
       });
       const credential = get(res, "data", "");
+      Logger.info(`令牌: ********`);
       setCredential(credential);
       Logger.info("登录成功");
     } catch (error) {
