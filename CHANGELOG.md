@@ -1,5 +1,11 @@
 # @frade-sam/assets-cli
 
+## 0.0.10
+
+### Patch Changes
+
+- dca7217: 0.0.10
+
 ## 0.0.9
 
 ### Patch Changes
