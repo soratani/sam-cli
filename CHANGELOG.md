@@ -1,5 +1,11 @@
 # @frade-sam/assets-cli
 
+## 0.1.1
+
+### Patch Changes
+
+- fb5c8e1: 0.1.1
+
 ## 0.1.0
 
 ### Minor Changes
