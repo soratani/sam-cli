@@ -49,6 +49,7 @@ export const api = axios.create({
 });
 
 api.interceptors.request.use((config): any => {
+  if (config.headers['credential']) return config;
   return {
     ...config,
     headers: {
