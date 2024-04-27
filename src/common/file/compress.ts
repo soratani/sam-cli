@@ -51,7 +51,7 @@ export function zip(options: IZipOption) {
   const pkgjson = packageInfo(json);
   const version = get(pkgjson, "version");
   if (!version) return;
-  const outputPath = join(output, `${name}_${version}_${hash}.zip`);
+  const outputPath = join(output, `${hash}.zip`);
   const outputStream = createWriteStream(outputPath);
   return new Promise<IPackage>((resolve) => {
     const archive = archiver("zip", {
