@@ -47,7 +47,7 @@ export class CompressAction extends AbstractAction {
     const formdata = new FormData();
     formdata.append("file", createReadStream(file));
     Logger.info(`准备上传 => ${tag} ${name}-${version}`)
-    return api.post<any, IRes>(`/package/add/${tag}/${name}/${version}`, formdata, {
+    return api.post<any, IRes>(`/package/add_package/${tag}/${name}/${version}`, formdata, {
       headers: { ...formdata.getHeaders(), credential },
     });
   }
