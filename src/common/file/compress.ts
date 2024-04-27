@@ -38,13 +38,16 @@ export interface IPackage {
   file: string;
 }
 
-export function zip(
-  name: string,
-  json: string,
-  hash: string,
-  input: string,
-  output: string
-) {
+export interface IZipOption {
+  name: string;
+  json: string;
+  hash: string;
+  input: string;
+  output: string;
+}
+
+export function zip(options: IZipOption) {
+  const { name, json, hash, input, output } = options;
   const pkgjson = packageInfo(json);
   const version = get(pkgjson, "version");
   if (!version) return;
@@ -55,8 +58,9 @@ export function zip(
       zlib: { level: 9 }, // Sets the compression level.
     });
     outputStream.on("close", function () {
-      Logger.info(`${hash}.zip ${archive.pointer()} total bytes`);
-      Logger.info(`${name}压缩完毕`);
+      Logger.info(
+        `${name}_${version}_${hash}.zip ${archive.pointer()} total bytes`
+      );
       resolve({
         name: name,
         version: version,
@@ -64,10 +68,10 @@ export function zip(
       });
     });
     outputStream.on("end", function () {
-      Logger.info(`${name}压缩完毕`);
+      Logger.info(`${name}_${version}_${hash}.zip`);
     });
     archive.on("warning", function (err) {
-      Logger.wran(`${name}压缩异常`);
+      Logger.wran(`${name}_${version}_${hash}.zip压缩异常`);
       if (err.code === "ENOENT") {
         resolve(undefined);
       } else {
@@ -76,7 +80,7 @@ export function zip(
     });
 
     archive.on("error", function (err) {
-      Logger.wran(`${name}压缩异常`);
+      Logger.wran(`${name}_${version}_${hash}.zip压缩异常`);
       resolve(undefined);
     });
     archive.pipe(outputStream);

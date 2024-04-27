@@ -8,13 +8,19 @@ export class CompressCommand extends AbstractCommand {
       .command("compress")
       .description("压缩文件")
       .option("-c, --config [config]", "配置文件", "assets.yaml")
+      .option("-t, --tag [tag]", "标记", "base")
       .action(async (command: Command) => {
         const config = get(command, "config");
+        const tag = get(command, "tag");
         const inputs: Input[] = [];
         const options: Input[] = [];
         options.push({
           name: "config",
           value: config,
+        });
+        options.push({
+          name: "tag",
+          value: tag,
         });
         await this.action.handle(inputs, options);
       });

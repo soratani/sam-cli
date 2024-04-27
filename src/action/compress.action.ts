@@ -8,7 +8,7 @@ import { Logger, api, IRes, IPkg, createPackageHash } from "@/utils";
 import { IPackage, zip } from "@/common/file";
 
 export class CompressAction extends AbstractAction {
-  private async createHash(packages: IPkg[]): Promise<IPkg[]> {
+  private async createHash(packages: IPkg[]): Promise<Required<IPkg>[]> {
     const dirs = packages
       .map((item) => {
         return {
@@ -34,34 +34,29 @@ export class CompressAction extends AbstractAction {
       )
       .catch(() => {
         Logger.error("文件hash生成失败");
-      }) as Promise<IPkg[]>;
+      }) as Promise<Required<IPkg>[]>;
   }
 
   private async zipPackage(packages: IPkg[]) {
     const data = await this.createHash(packages);
-    const res = await Promise.all(
-      data.map((item) =>
-        zip(item.name, item.json, item.hash, item.input, item.output)
-      )
-    );
+    const res = await Promise.all(data.map((item) => zip(item)));
     return res.filter((i) => !!i);
   }
 
-  private async uploadPackage(name: string, verions: string, file: string) {
+  private async uploadPackage(tag: string, name: string, version: string, file: string) {
     const formdata = new FormData();
     formdata.append("file", createReadStream(file));
-    formdata.append("version", verions);
-    return api.put<any, IRes>(`/package/update/${name}`, formdata, {
+    return api.post<any, IRes>(`/package/add/${tag}/${name}/${version}`, formdata, {
       headers: { ...formdata.getHeaders() },
     });
   }
 
-  private async uploadPackages(packages: IPackage[]) {
-    return Promise.all(
-      packages.map((item) =>
-        this.uploadPackage(item.name, item.version, item.file)
-      )
-    ).then((value: IRes[]) => value.filter((i) => i.code !== 1));
+  private uploadPackages(tag: string, packages: IPackage[]) {
+    return packages.reduce((pre: Promise<IRes>, item) => {
+      return pre
+        .then(() => this.uploadPackage(tag, item.name, item.version, item.file))
+        .catch(() => this.uploadPackage(tag, item.name, item.version, item.file));
+    }, Promise.resolve({ code: 500, message: "" }));
   }
 
   public async handle(
@@ -70,6 +65,7 @@ export class CompressAction extends AbstractAction {
     extraFlags?: string[]
   ): Promise<void> {
     const config = options.find((o) => o.name === "config")?.value as string;
+    const tag = options.find((o) => o.name === "tag")?.value as string;
     try {
       const configData = this.config(config);
       const pkgs = get(configData, "packages") as IPkg[];
@@ -77,8 +73,8 @@ export class CompressAction extends AbstractAction {
       const files: IPackage[] = await this.zipPackage(pkgs);
       if (!files.length) Logger.error("压缩失败");
       Logger.info("准备上传");
-      const [task] = await this.uploadPackages(files);
-      if (task) {
+      const task = await this.uploadPackages(tag, files);
+      if (task.code !== 1) {
         Logger.error(task.message);
       }
       Logger.info("上传资源包完毕");
