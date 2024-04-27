@@ -46,6 +46,7 @@ export class CompressAction extends AbstractAction {
   private async uploadPackage(tag: string, name: string, version: string, file: string, credential: string) {
     const formdata = new FormData();
     formdata.append("file", createReadStream(file));
+    Logger.info(`准备上传 => ${tag} ${name}-${version}`)
     return api.post<any, IRes>(`/package/add/${tag}/${name}/${version}`, formdata, {
       headers: { ...formdata.getHeaders(), credential },
     });
