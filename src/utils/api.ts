@@ -37,7 +37,7 @@ export interface IRes {
 }
 
 export const api = axios.create({
-  baseURL: process.env.HOST || "http://127.0.0.1:3000/api",
+  baseURL: process.env.HOST || "https://www.soratani.cn/api",
   headers: {
     version: pkg.version,
     app: pkg.name,
