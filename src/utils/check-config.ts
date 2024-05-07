@@ -10,6 +10,8 @@ const IpSchema = joi.object().keys({
 const PkgSchema = joi
   .object()
   .keys({
+    type: joi.string().valid("app", "template").default("app"),
+    tag: joi.string().valid("server", "cos").default("cos"),
     name: Joi.string().required(),
     input: joi.string().required(),
     output: joi.string().required(),
@@ -46,6 +48,8 @@ interface IP {
 
 export interface IPkg {
   name: string;
+  type: string;
+  tag: string;
   input: string;
   output: string;
   hash?: string;

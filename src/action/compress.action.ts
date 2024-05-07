@@ -43,20 +43,27 @@ export class CompressAction extends AbstractAction {
     return res.filter((i) => !!i);
   }
 
-  private async uploadPackage(tag: string, name: string, version: string, file: string, credential: string) {
+  private async uploadPackage(pkg: IPackage, credential: string) {
     const formdata = new FormData();
+    const { name, version, type, file } = pkg;
     formdata.append("file", createReadStream(file));
-    Logger.info(`准备上传 => ${tag} ${name}-${version}`)
-    return api.post<any, IRes>(`/package/add_package/${tag}/${name}/${version}`, formdata, {
-      headers: { ...formdata.getHeaders(), credential },
-    });
+    formdata.append("tag", pkg.tag);
+    formdata.append("type", pkg.type);
+    Logger.info(`准备上传 => ${type} ${name}-${version}`);
+    return api.post<any, IRes>(
+      `/package/add_package/${name}/${version}`,
+      formdata,
+      {
+        headers: { ...formdata.getHeaders(), credential },
+      }
+    );
   }
 
-  private uploadPackages(tag: string, packages: IPackage[], credential: string) {
+  private uploadPackages(packages: IPackage[], credential: string) {
     return packages.reduce((pre: Promise<IRes>, item) => {
       return pre
-        .then(() => this.uploadPackage(tag, item.name, item.version, item.file, credential))
-        .catch(() => this.uploadPackage(tag, item.name, item.version, item.file, credential));
+        .then(() => this.uploadPackage(item, credential))
+        .catch(() => this.uploadPackage(item, credential));
     }, Promise.resolve({ code: 500, message: "" }));
   }
 
@@ -67,7 +74,8 @@ export class CompressAction extends AbstractAction {
   ): Promise<void> {
     const config = options.find((o) => o.name === "config")?.value as string;
     const tag = options.find((o) => o.name === "tag")?.value as string;
-    const credential = options.find((o) => o.name === "credential")?.value as string;
+    const credential = options.find((o) => o.name === "credential")
+      ?.value as string;
     try {
       const configData = this.config(config);
       const pkgs = get(configData, "packages") as IPkg[];
@@ -75,7 +83,7 @@ export class CompressAction extends AbstractAction {
       const files: IPackage[] = await this.zipPackage(pkgs);
       if (!files.length) Logger.error("压缩失败");
       Logger.info("准备上传");
-      const task = await this.uploadPackages(tag, files, credential);
+      const task = await this.uploadPackages(files, credential);
       if (task.code !== 1) {
         Logger.error(task.message);
       }

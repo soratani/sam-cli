@@ -37,7 +37,7 @@ export interface IRes {
 }
 
 export const api = axios.create({
-  baseURL: process.env.HOST || "https://www.soratani.cn/api",
+  baseURL: "http://127.0.0.1:3000/api",
   headers: {
     version: pkg.version,
     app: pkg.name,
@@ -63,6 +63,7 @@ api.interceptors.response.use(
     return get(value, "data", { code: 500, message: "服务异常" });
   },
   (error) => {
+    console.log(">>>", error);
     return get(error, "response.data", { code: 500, message: "服务异常" });
   }
 );
