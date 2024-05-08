@@ -59,9 +59,19 @@
     "tsc-alias": "^1.8.8",
     "typescript": "^5.0.4",
     "yaml": "^2.2.2",
-    "ora": "5.0.0"
+    "ora": "5.0.0",
+    "webpack": "5.89.0",
+    "webpack-cli": "5.1.4",
+    "webpack-dashboard": "3.3.8",
+    "webpack-dev-server": "4.15.1",
+    "webpack-merge": "5.10.0"
   },
   "peerDependencies": {
+    "webpack": "5.89.0",
+    "webpack-cli": "5.1.4",
+    "webpack-dashboard": "3.3.8",
+    "webpack-dev-server": "4.15.1",
+    "webpack-merge": "5.10.0",
     "ali-oss": "^6.17.1",
     "archiver": "^7.0.1",
     "axios": "^1.6.8",

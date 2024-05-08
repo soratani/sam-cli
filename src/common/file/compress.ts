@@ -1,46 +1,21 @@
-import { readFileSync, createWriteStream, statSync } from "fs";
+import { createWriteStream, existsSync, mkdirSync } from "fs";
 import archiver from "archiver";
-import { get } from "lodash";
 import { join } from "path";
 import { Logger } from "../../utils/logger";
 import { IPkg } from "@/utils";
-
-function paths(_path: string, split = "/") {
-  return _path.split(split).filter(Boolean);
-}
-
-function packageInfo(filepath: string) {
-  const code = readFileSync(filepath).toString();
-  try {
-    return JSON.parse(code);
-  } catch (error) {
-    return {};
-  }
-}
-
-function packageName(input: string) {
-  const stat = statSync(input);
-  const list = paths(input);
-  if (stat.isDirectory()) {
-    return list[list.length - 1];
-  }
-  return list[list.length - 2];
-}
+import { PackageInfo } from "@/utils/config";
 
 export interface IPackage extends Pick<IPkg, "name" | "type"> {
   version: string;
   file: string;
 }
 
-export function zip(options: IPkg) {
-  const { name, json, hash, input, output } = options;
-  const pkgjson = packageInfo(json);
-  const version = get(pkgjson, "version");
-
-  if (!version) return;
-  const outputPath = join(output, `${hash}.zip`);
+export function zip(options: PackageInfo) {
+  const { name, version, hash, output, zip } = options;
+  if (!existsSync(zip)) mkdirSync(zip, { recursive: true });
+  const outputPath = join(zip, `${hash}.zip`);
   const outputStream = createWriteStream(outputPath);
-  return new Promise<IPackage>((resolve) => {
+  return new Promise<PackageInfo>((resolve) => {
     const archive = archiver("zip", {
       zlib: { level: 9 }, // Sets the compression level.
     });
@@ -48,12 +23,7 @@ export function zip(options: IPkg) {
       Logger.info(
         `${name}_${version}_${hash}.zip ${archive.pointer()} total bytes`
       );
-      resolve({
-        name: name,
-        version: version,
-        file: outputPath,
-        type: options.type,
-      });
+      resolve({ ...options, zip: outputPath });
     });
     outputStream.on("end", function () {
       Logger.info(`${name}_${version}_${hash}.zip`);
@@ -72,6 +42,6 @@ export function zip(options: IPkg) {
       resolve(undefined);
     });
     archive.pipe(outputStream);
-    return archive.directory(input, false).finalize();
+    return archive.directory(output, false).finalize();
   });
 }

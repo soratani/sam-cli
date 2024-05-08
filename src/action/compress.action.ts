@@ -1,7 +1,8 @@
 import { get } from "lodash";
 import { Input } from "@/command";
 import { AbstractAction } from "@/action";
-import { Logger, IPkg } from "@/utils";
+import { Logger } from "@/utils";
+import { IPackage, PackageInfo, parsePackage } from "@/utils/config";
 import { Package } from "@/common/file";
 
 export class CompressAction extends AbstractAction {
@@ -15,9 +16,14 @@ export class CompressAction extends AbstractAction {
       ?.value as string;
     try {
       const configData = this.config(config);
-      const pkgs = get(configData, "packages") as IPkg[];
+      const pkgs = get(configData, "package") as IPackage[];
       if (!pkgs || !pkgs.length) return Logger.error("配置错误");
-      const data = pkgs.map((item) => new Package(item, credential));
+      const info = pkgs.reduce<PackageInfo[]>(
+        (pre, item) => pre.concat(parsePackage(item)),
+        []
+      );
+      if (!info.length) return Logger.error("package信息有误");
+      const data = info.map((item) => new Package(item, credential));
       Logger.info("准备上传");
       const task = await Package.syncAll(data);
       if (task.code !== 1) {

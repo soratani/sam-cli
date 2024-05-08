@@ -11,7 +11,8 @@ import {
 import FormData from "form-data";
 import { join } from "path";
 import { createReadStream } from "fs";
-import { IPackage, zip } from "./compress";
+import { zip } from "./compress";
+import { IPackage, PackageInfo } from "@/utils/config";
 
 export class Package {
   static syncType(type: PACKAGE_TYPE) {
@@ -24,16 +25,14 @@ export class Package {
       .map(([key]) => key);
   }
 
-  static params(pkg: IPackage) {
-    const { type, file, name, version } = pkg;
-    return type.map((item) => {
-      const formdata = new FormData();
-      formdata.append("file", createReadStream(file));
-      formdata.append("code", name);
-      formdata.append("version", version);
-      formdata.append("type", item);
-      return formdata;
-    });
+  static params(pkg: PackageInfo) {
+    const { type, zip, name, version } = pkg;
+    const formdata = new FormData();
+    formdata.append("file", createReadStream(zip));
+    formdata.append("code", name);
+    formdata.append("version", version);
+    formdata.append("type", type);
+    return formdata;
   }
 
   static syncAll(packages: Package[]) {
@@ -42,8 +41,14 @@ export class Package {
     }, Promise.resolve({ code: 500, message: "" }));
   }
 
+  static buildAll(packages: Package[]) {
+    return packages.reduce((pre: Promise<IRes>, item) => {
+      return pre.then(() => item.build());
+    }, Promise.resolve({ code: 500, message: "" }));
+  }
+
   constructor(
-    private readonly option: IPkg,
+    private readonly option: PackageInfo,
     private readonly credential: string
   ) {
     this.hash = this.hash.bind(this);
@@ -51,25 +56,16 @@ export class Package {
     this.sync = this.sync.bind(this);
   }
 
-  get data() {
-    return {
-      ...this.option,
-      input: join(process.cwd(), this.option.input),
-      output: join(process.cwd(), this.option.output),
-      json: join(process.cwd(), this.option.json),
-    };
-  }
-
   hash() {
-    return createPackageHash(this.data.input);
+    return createPackageHash(this.option.output);
   }
 
   async compress() {
     try {
       const hash = await this.hash();
-      return await zip({ ...this.data, hash });
+      return await zip({ ...this.option, hash });
     } catch (error) {
-      Logger.error(`${this.data.name}压缩失败`);
+      Logger.error(`${this.option.name}压缩失败`);
       return undefined;
     }
   }
@@ -80,6 +76,9 @@ export class Package {
     const { name, version, type } = pkg;
     const URL = `/package/add_package`;
     const params = Package.params(pkg);
+    const config = {
+      headers: { ...params.getHeaders(), credential: this.credential },
+    };
     const task = createTask(
       "bouncingBar",
       `\n${INFO_PREFIX}`,
@@ -87,15 +86,9 @@ export class Package {
     );
     Logger.info(`准备上传 ${type} ${name}-${version}`);
     task.start();
-    return Promise.all(
-      params.map((item) => {
-        const config = {
-          headers: { ...item.getHeaders(), credential: this.credential },
-        };
-        return api.post<any, IRes>(URL, item, config);
-      })
-    )
-      .then(([res]) => {
+    return api
+      .post<any, IRes>(URL, params, config)
+      .then((res) => {
         task.succeed(Logger.infoText(`上传完成 ${type}:${name}-${version}`));
         return res;
       })
@@ -103,5 +96,9 @@ export class Package {
         task.fail(Logger.errorText(`上传失败 ${type}:${name}-${version}`));
         return { code: 500, message: "" };
       });
+  }
+
+  async build() {
+    Logger.info(`开始打包 ${this.option.name}:${this.option.version}`);
   }
 }
