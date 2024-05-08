@@ -2,10 +2,29 @@ import { get } from "lodash";
 import { Input } from "@/command";
 import { AbstractAction } from "@/action";
 import { Logger } from "@/utils";
-import { IPackage, PackageInfo, parsePackage } from "@/utils/config";
+import {
+  Common,
+  IPackage,
+  PackageInfo,
+  parseCommon,
+  parsePackage,
+} from "@/utils/config";
 import { Package } from "@/common/file";
 
 export class CompressAction extends AbstractAction {
+  private checkPackages(pkgs: IPackage[]): PackageInfo[] {
+    if (!pkgs || !pkgs.length) Logger.error("配置错误");
+    const info = pkgs.reduce<PackageInfo[]>(
+      (pre, item) => pre.concat(parsePackage(item)),
+      []
+    );
+    if (!info.length) Logger.error("package信息有误");
+    return info;
+  }
+  private checkCommons(commons: Common[]): Common[] {
+    if (!commons || !commons.length) return [];
+    return commons.map((item) => parseCommon(item)).filter(Boolean) as Common[];
+  }
   public async handle(
     inputs?: Input[],
     options?: Input[],
@@ -17,12 +36,9 @@ export class CompressAction extends AbstractAction {
     try {
       const configData = this.config(config);
       const pkgs = get(configData, "package") as IPackage[];
-      if (!pkgs || !pkgs.length) return Logger.error("配置错误");
-      const info = pkgs.reduce<PackageInfo[]>(
-        (pre, item) => pre.concat(parsePackage(item)),
-        []
-      );
-      if (!info.length) return Logger.error("package信息有误");
+      const commons = get(configData, "common") as Common[];
+      const commonInfo = this.checkCommons(commons);
+      const info = this.checkPackages(pkgs);
       const data = info.map((item) => new Package(item, credential));
       Logger.info("准备上传");
       const task = await Package.syncAll(data);

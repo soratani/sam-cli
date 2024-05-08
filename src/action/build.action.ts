@@ -42,7 +42,7 @@ export class BuildAction extends AbstractAction {
       const info = this.checkPackages(pkgs);
       const data = info.map((item) => new Package(item, credential));
       Logger.info("准备打包");
-      await Package.buildAll(data);
+      await Package.buildAll(data, commonInfo);
     } catch (error) {
       Logger.error(error.message);
     }

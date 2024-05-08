@@ -12,7 +12,7 @@ import FormData from "form-data";
 import { join } from "path";
 import { createReadStream } from "fs";
 import { zip } from "./compress";
-import { IPackage, PackageInfo } from "@/utils/config";
+import { Common, IPackage, PackageInfo } from "@/utils/config";
 
 export class Package {
   static syncType(type: PACKAGE_TYPE) {
@@ -41,9 +41,9 @@ export class Package {
     }, Promise.resolve({ code: 500, message: "" }));
   }
 
-  static buildAll(packages: Package[]) {
+  static buildAll(packages: Package[], alias: Common[]) {
     return packages.reduce((pre: Promise<IRes>, item) => {
-      return pre.then(() => item.build());
+      return pre.then(() => item.build(alias));
     }, Promise.resolve({ code: 500, message: "" }));
   }
 
@@ -98,7 +98,9 @@ export class Package {
       });
   }
 
-  async build() {
-    Logger.info(`开始打包 ${this.option.name}:${this.option.version}`);
+  async build(alias: Common[]) {
+    Logger.info(
+      `开始打包 ${this.option.name}:${this.option.type}-${this.option.version}`
+    );
   }
 }

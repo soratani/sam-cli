@@ -46,10 +46,10 @@ export function parsePackage(data: IPackage): PackageInfo[] {
   return data.builder
     .map((item) => {
       const main = join(pkgDir, item.main);
+      if (!existsSync(main)) return undefined;
       const itemBuildDir = join(buildDir, `${data.name}/${item.type}`);
       const itemZipDir = join(zipDir, `${data.name}/${item.type}`);
       const stat = statSync(main);
-      if (!existsSync(main)) return undefined;
       if (!stat.isFile()) return undefined;
       return {
         name: data.name,
