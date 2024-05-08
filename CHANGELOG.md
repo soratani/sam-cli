@@ -1,5 +1,11 @@
 # @frade-sam/assets-cli
 
+## 0.1.3
+
+### Patch Changes
+
+- aa23962: 0.1.3
+
 ## 0.1.2
 
 ### Patch Changes
