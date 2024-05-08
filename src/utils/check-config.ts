@@ -10,6 +10,10 @@ const IpSchema = joi.object().keys({
 const PkgSchema = joi
   .object()
   .keys({
+    type: joi
+      .array()
+      .items(joi.string().valid("app", "template", "h5", "web").default("app"))
+      .required(),
     name: Joi.string().required(),
     input: joi.string().required(),
     output: joi.string().required(),
@@ -39,13 +43,16 @@ const schema = joi.object({
   assets: joi.array().items(AssetsSchema).required(),
 });
 
-interface IP {
-  host: string;
-  port: string | number;
+export enum PACKAGE_TYPE {
+  APP = "app",
+  TEMPLATE = "template",
+  H5 = "h5",
+  WEB = "web",
 }
 
 export interface IPkg {
   name: string;
+  type: PACKAGE_TYPE[];
   input: string;
   output: string;
   hash?: string;

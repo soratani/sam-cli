@@ -1,14 +1,9 @@
-import {
-  readdirSync,
-  readFileSync,
-  createWriteStream,
-  statSync,
-  existsSync,
-} from "fs";
+import { readFileSync, createWriteStream, statSync } from "fs";
 import archiver from "archiver";
 import { get } from "lodash";
 import { join } from "path";
 import { Logger } from "../../utils/logger";
+import { IPkg } from "@/utils";
 
 function paths(_path: string, split = "/") {
   return _path.split(split).filter(Boolean);
@@ -32,24 +27,16 @@ function packageName(input: string) {
   return list[list.length - 2];
 }
 
-export interface IPackage {
-  name: string;
+export interface IPackage extends Pick<IPkg, "name" | "type"> {
   version: string;
   file: string;
 }
 
-export interface IZipOption {
-  name: string;
-  json: string;
-  hash: string;
-  input: string;
-  output: string;
-}
-
-export function zip(options: IZipOption) {
+export function zip(options: IPkg) {
   const { name, json, hash, input, output } = options;
   const pkgjson = packageInfo(json);
   const version = get(pkgjson, "version");
+
   if (!version) return;
   const outputPath = join(output, `${hash}.zip`);
   const outputStream = createWriteStream(outputPath);
@@ -65,6 +52,7 @@ export function zip(options: IZipOption) {
         name: name,
         version: version,
         file: outputPath,
+        type: options.type,
       });
     });
     outputStream.on("end", function () {
