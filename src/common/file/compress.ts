@@ -27,18 +27,16 @@ function packageName(input: string) {
   return list[list.length - 2];
 }
 
-export interface IPackage {
-  name: string;
+export interface IPackage extends Pick<IPkg, "name" | "type"> {
   version: string;
   file: string;
-  type: string;
-  tag: string;
 }
 
 export function zip(options: IPkg) {
   const { name, json, hash, input, output } = options;
   const pkgjson = packageInfo(json);
   const version = get(pkgjson, "version");
+
   if (!version) return;
   const outputPath = join(output, `${hash}.zip`);
   const outputStream = createWriteStream(outputPath);
@@ -55,7 +53,6 @@ export function zip(options: IPkg) {
         version: version,
         file: outputPath,
         type: options.type,
-        tag: options.tag,
       });
     });
     outputStream.on("end", function () {
