@@ -10,6 +10,7 @@ export default function createModule(pkg: PackageInfo): RuleSetRule[] {
         exclude: /\.module\.(css|less)$/,
         use: [
             "css-loader",
+            
             {
                 loader: 'postcss-loader',
                 options: {

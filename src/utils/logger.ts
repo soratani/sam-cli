@@ -12,14 +12,14 @@ export const WRAN_PREFIX = colors.bgRgb(208, 211, 45).bold.rgb(0, 0, 0)(
 
 export class Logger {
   static error(message: string, ...args: any[]) {
-    console.log(`\n${ERROR_PREFIX} ${colors.redBright(message)}`, ...args);
+    console.log(`${ERROR_PREFIX} ${colors.redBright(message)}`, ...args);
     process.exit(1);
   }
   static info(message: string, ...args: any[]) {
-    console.log(`\n${INFO_PREFIX} ${colors.green(message)}`, ...args);
+    console.log(`${INFO_PREFIX} ${colors.green(message)}`, ...args);
   }
   static wran(message: string, ...args: any[]) {
-    console.log(`\n${WRAN_PREFIX} ${colors.yellow(message)}`, ...args);
+    console.log(`${WRAN_PREFIX} ${colors.yellow(message)}`, ...args);
   }
   static baseText(message: string) {
     return colors.blue(message);

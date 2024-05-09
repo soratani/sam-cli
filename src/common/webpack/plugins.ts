@@ -6,8 +6,7 @@ import CopyWebpackPlugin from 'copy-webpack-plugin';
 import ModuleConcatenationPlugin from 'webpack/lib/optimize/ModuleConcatenationPlugin';
 import webpack, { DefinePlugin } from 'webpack';
 import EslintWebpackPlugin from 'eslint-webpack-plugin';
-import { CleanWebpackPlugin } from 'clean-webpack-plugin';
-import { join } from "path";
+import { CleanWebpackPlugin } from "clean-webpack-plugin";
 import { findFiles } from "@/utils";
 
 
@@ -34,32 +33,45 @@ export default function createPlugins(pkg: PackageInfo) {
         new ModuleConcatenationPlugin(),
     ];
     if (pkg.public) {
-        plugins.push(new CopyWebpackPlugin({
-            patterns: [
-                {
-                    from: pkg.public,
-                    to: pkg.output,
-                },
-            ],
-        }),)
+      plugins.push(
+        new CopyWebpackPlugin({
+          patterns: [
+            {
+              from: pkg.public,
+              to: pkg.output,
+              filter(filepath: string) {
+                return !filepath.includes(".html");
+              },
+            },
+          ],
+        })
+      );
     }
     if (![PACKAGE_TYPE.APP].includes(pkg.type)) {
-        plugins.push(new MiniCssExtractPlugin({
-            filename: `static/style/[name].[contenthash:8].css`,
-            chunkFilename: `static/style/[id].[contenthash:8].chunk.css`,
-        }))
+      plugins.push(
+        new MiniCssExtractPlugin({
+          filename: `static/style/[name].[contenthash:8].css`,
+          chunkFilename: `static/style/[id].[contenthash:8].chunk.css`,
+        })
+      );
+    }
+    if (pkg.template) {
+      plugins.push(
+        new HtmlWebpackPlugin({
+          template: pkg.template,
+          filename: "index.html",
+          inject: "head",
+        })
+      );
     }
     if (pkg.public) {
-        plugins.push(new HtmlWebpackPlugin({
-            template: pkg.template,
-            filename: "index.html",
-            inject: "head",
-        }), 
+      plugins.push(
         new HtmlWebpackTagsPlugin({
-            links: assets.filter((file) => file.includes(".css")),
-            tags: assets.filter((file) => file.includes(".js")),
-            append: false,
-        }))
+          links: assets.filter((file) => file.includes(".css")),
+          tags: assets.filter((file) => file.includes(".js")),
+          append: false,
+        })
+      );
     }
     return plugins;
 }

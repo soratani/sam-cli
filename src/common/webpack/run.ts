@@ -6,10 +6,15 @@ import createAlias from "./alias";
 
 export default function run(pkg: PackageInfo, common: Common[]) {
   const alias = createAlias(pkg, common);
-  console.log(alias, pkg.name);
   const config = createConfig(pkg, alias);
-  webpack(config, function(err, stats) {
-    const error = get(stats, 'compilation.errors', [])
-    console.log(config.entry, config.output, pkg.theme, error);
+  return new Promise<PackageInfo>((resolve, reject) => {
+    webpack(config, function (err, stats) {
+      const error = get(stats, "compilation.errors.0", "");
+      if (err || error) {
+        reject(err || error);
+      } else {
+        resolve(pkg);
+      }
+    });
   });
 }

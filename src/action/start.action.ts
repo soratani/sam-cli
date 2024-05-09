@@ -11,7 +11,7 @@ import {
 } from "@/utils/config";
 import { Package } from "@/common/file";
 
-export class CompressAction extends AbstractAction {
+export class StartAction extends AbstractAction {
   private checkPackages(
     pkgs: IPackage[],
     theme?: string,
@@ -29,31 +29,26 @@ export class CompressAction extends AbstractAction {
     if (!commons || !commons.length) return [];
     return commons.map((item) => parseCommon(item)).filter(Boolean) as Common[];
   }
+
   public async handle(
     inputs?: Input[],
     options?: Input[],
     extraFlags?: string[]
   ): Promise<void> {
     const config = options.find((o) => o.name === "config")?.value as string;
-    const credential = options.find((o) => o.name === "credential")
-      ?.value as string;
+    const pkg = options.find((o) => o.name === "package")?.value as string;
     try {
       const configData = this.config(config);
       const pkgs = get(configData, "package") as IPackage[];
+      const packages = pkg ? pkgs.filter((item) => item.name === pkg) : pkgs;
       const commons = get(configData, "common") as Common[];
-      const publicPath = get(configData, "public");
       const theme = get(configData, "theme");
+      const publicPath = get(configData, "public");
       const commonInfo = this.checkCommons(commons);
-      const info = this.checkPackages(pkgs, theme, publicPath);
-      const data = info.map((item) => new Package(item, credential));
-      Logger.info("准备打包");
-      await Package.buildAll(data, commonInfo);
-      Logger.info("准备上传");
-      const task = await Package.syncAll(data);
-      if (task.code !== 1) {
-        Logger.error(task.message);
-      }
-      Logger.info("上传资源包完毕");
+      const info = this.checkPackages(packages, theme, publicPath);
+      const data = info.map((item) => new Package(item, ""));
+      Logger.info("准备启动");
+      await Package.startAll(data, commonInfo);
     } catch (error) {
       Logger.error(error.message);
     }

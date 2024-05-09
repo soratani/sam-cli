@@ -11,6 +11,7 @@ import { createReadStream } from "fs";
 import { zip } from "./compress";
 import { Common, PackageInfo,  PACKAGE_TYPE, } from "@/utils/config";
 import run from "../webpack/run";
+import start from "../webpack/server";
 
 export class Package {
   static syncType(type: PACKAGE_TYPE) {
@@ -42,6 +43,12 @@ export class Package {
   static buildAll(packages: Package[], alias: Common[]) {
     return packages.reduce((pre: Promise<IRes>, item) => {
       return pre.then(() => item.build(alias));
+    }, Promise.resolve({ code: 500, message: "" }));
+  }
+
+  static startAll(packages: Package[], alias: Common[]) {
+    return packages.reduce((pre: Promise<IRes>, item) => {
+      return pre.then(() => item.start(alias));
     }, Promise.resolve({ code: 500, message: "" }));
   }
 
@@ -100,6 +107,44 @@ export class Package {
     Logger.info(
       `开始打包 ${this.option.name}:${this.option.type}-${this.option.version}`
     );
-    run(this.option, alias);
+    const task = createTask(
+      "dots",
+      INFO_PREFIX,
+      `打包中 ${this.option.type}:${this.option.name}-${this.option.version}`
+    );
+    try {
+      task.start();
+      await run(this.option, alias);
+      task.succeed(
+        `打包成功 ${this.option.type}:${this.option.name}-${this.option.version}`
+      );
+    } catch (error) {
+      console.log(error);
+      task.fail(
+        `打包失败 ${this.option.type}:${this.option.name}-${this.option.version}`
+      );
+    }
+  }
+
+  async start(alias: Common[]) {
+    Logger.info(
+      `开始启动 ${this.option.name}:${this.option.type}-${this.option.version}`
+    );
+    const task = createTask(
+      "dots",
+      INFO_PREFIX,
+      `启动中 ${this.option.type}:${this.option.name}-${this.option.version}`
+    );
+    try {
+      task.start();
+      await start(this.option, alias);
+      task.succeed(
+        `启动成功 ${this.option.type}:${this.option.name}-${this.option.version}`
+      );
+    } catch (error) {
+      task.fail(
+        `启动失败 ${this.option.type}:${this.option.name}-${this.option.version}`
+      );
+    }
   }
 }
