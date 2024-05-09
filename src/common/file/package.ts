@@ -1,18 +1,16 @@
 import {
   INFO_PREFIX,
-  IPkg,
   IRes,
   Logger,
-  PACKAGE_TYPE,
   api,
   createPackageHash,
   createTask,
 } from "@/utils";
 import FormData from "form-data";
-import { join } from "path";
 import { createReadStream } from "fs";
 import { zip } from "./compress";
-import { Common, IPackage, PackageInfo } from "@/utils/config";
+import { Common, PackageInfo,  PACKAGE_TYPE, } from "@/utils/config";
+import run from "../webpack/run";
 
 export class Package {
   static syncType(type: PACKAGE_TYPE) {
@@ -102,5 +100,6 @@ export class Package {
     Logger.info(
       `开始打包 ${this.option.name}:${this.option.type}-${this.option.version}`
     );
+    run(this.option, alias);
   }
 }

@@ -8,6 +8,7 @@ export enum PACKAGE_TYPE {
 export interface Builder {
   type: PACKAGE_TYPE;
   main: string;
+  template: string;
 }
 
 export interface IPackage {
@@ -19,16 +20,21 @@ export interface IPackage {
 export interface Common {
   name: string;
   source: string;
-  main: string;
+  main?: string;
 }
 
 export interface IConfig {
+  theme?: string;
+  public?: string;
   package: IPackage[];
   common: Common[];
 }
 
 export interface PackageInfo extends Omit<IPackage, "builder"> {
   zip: string;
+  theme?: string;
+  public?: string;
+  template: string;
   version: string;
   hash: string;
   main: string;

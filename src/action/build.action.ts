@@ -12,10 +12,10 @@ import {
 import { Package } from "@/common/file";
 
 export class BuildAction extends AbstractAction {
-  private checkPackages(pkgs: IPackage[]): PackageInfo[] {
+  private checkPackages(pkgs: IPackage[], theme?:  string): PackageInfo[] {
     if (!pkgs || !pkgs.length) Logger.error("配置错误");
     const info = pkgs.reduce<PackageInfo[]>(
-      (pre, item) => pre.concat(parsePackage(item)),
+      (pre, item) => pre.concat(parsePackage(item, theme)),
       []
     );
     if (!info.length) Logger.error("package信息有误");
@@ -38,8 +38,9 @@ export class BuildAction extends AbstractAction {
       const configData = this.config(config);
       const pkgs = get(configData, "package") as IPackage[];
       const commons = get(configData, "common") as Common[];
+      const theme = get(configData, "theme");
       const commonInfo = this.checkCommons(commons);
-      const info = this.checkPackages(pkgs);
+      const info = this.checkPackages(pkgs, theme);
       const data = info.map((item) => new Package(item, credential));
       Logger.info("准备打包");
       await Package.buildAll(data, commonInfo);

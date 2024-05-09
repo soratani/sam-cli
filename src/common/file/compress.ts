@@ -1,14 +1,8 @@
 import { createWriteStream, existsSync, mkdirSync } from "fs";
 import archiver from "archiver";
 import { join } from "path";
-import { Logger } from "../../utils/logger";
-import { IPkg } from "@/utils";
+import { Logger } from "@/utils/logger";
 import { PackageInfo } from "@/utils/config";
-
-export interface IPackage extends Pick<IPkg, "name" | "type"> {
-  version: string;
-  file: string;
-}
 
 export function zip(options: PackageInfo) {
   const { name, version, hash, output, zip } = options;
