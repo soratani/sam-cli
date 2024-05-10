@@ -1,5 +1,5 @@
-export interface Input {
-    name: string;
-    value: boolean | string;
-    options?: any;
-  }
+export interface Input<V = any> {
+  name: string;
+  value: boolean | string | V;
+  options?: any;
+}

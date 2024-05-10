@@ -3,27 +3,25 @@ import { get } from "lodash";
 import { AbstractCommand, Input } from "@/command";
 import Config from "@/common/config";
 
-export class CompressCommand extends AbstractCommand {
+export class BuildCommand extends AbstractCommand {
   public load(program: Command): void {
     program
-      .command("compress")
-      .description("压缩文件")
+      .command("build")
+      .description("打包")
       .option(
         "-e, --env [env]",
-        "压缩环境:[test,production,development]",
+        "打包环境:[test,production,development]",
         "production"
       )
       .option("-a, --app [app]", "项目")
       .option("-c, --config [config]", "配置文件", "sam.yaml")
-      .option("-cr, --credential [credential]", "鉴权")
       .action(async (command: Command) => {
-        const config = get(command, "config");
-        const credential = get(command, "credential");
-        const app = get(command, "app");
-        const env = get(command, "env");
-        const instance = new Config(config, { credential, env });
         const inputs: Input[] = [];
         const options: Input[] = [];
+        const config = get(command, "config");
+        const env = get(command, "env");
+        const app = get(command, "app");
+        const instance = new Config(config, { env });
         options.push({
           name: "app",
           value: app,

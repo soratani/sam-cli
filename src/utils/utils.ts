@@ -1,8 +1,8 @@
 // 生成文件hash
 import { glob } from "glob";
 import crypto from "crypto";
-import path from "path";
-import { readFileSync } from "fs";
+import path, { join } from "path";
+import { existsSync, readFileSync, readdirSync, stat, statSync } from "fs";
 import ora from "ora";
 
 type SpinnerName =
@@ -92,6 +92,16 @@ type SpinnerName =
   | "aesthetic"
   | "dwarfFortress";
 
+function loopdir(dir: string): string[] {
+  const dirs = readdirSync(dir);
+  return dirs.reduce((pre, item) => {
+    const _path = join(dir, item);
+    const state = statSync(_path);
+    if (state.isDirectory()) return pre.concat(loopdir(_path));
+    return pre.concat([ _path ]);
+  }, []);
+}
+
 export function createPackageHash(input: string) {
   const hash = crypto.createHash("sha256");
   return new Promise<string>((resolve, reject) => {
@@ -124,4 +134,12 @@ export function createTask(
     color: "blue",
     interval: 80,
   });
+}
+
+export function findFiles(dir: string) {
+  if (!dir) return [];
+  const stat = statSync(dir);
+  if (!existsSync(dir)) return [];
+  if (stat.isFile()) return [dir];
+  return loopdir(dir).map((item) => item.replace(`${dir}${path.sep}`, ""));
 }
