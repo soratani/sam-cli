@@ -1,9 +1,10 @@
-import { PACKAGE_TYPE, PackageInfo } from "@/utils/config";
-import TerserWebpackPlugin from 'terser-webpack-plugin';
-import CssMinimizerWebpackPlugin from 'css-minimizer-webpack-plugin';
+import TerserWebpackPlugin from "terser-webpack-plugin";
+import CssMinimizerWebpackPlugin from "css-minimizer-webpack-plugin";
 import { Configuration } from "webpack";
 import createPlugins from "./plugins";
 import createModule from "./loader";
+import Config, { PACKAGE_TYPE, PackageInfo } from "../config";
+import createAlias from "./alias";
 
 function optimization(pkg: PackageInfo) {
   const opt: any = {
@@ -56,11 +57,9 @@ function createOutput(pkg: PackageInfo) {
   return output;
 }
 
-export default function (
-  pkg: PackageInfo,
-  alias: Record<string, string>
-): Configuration {
+export default function (pkg: PackageInfo, config: Config): Configuration {
   const output = createOutput(pkg);
+  const alias = createAlias(pkg, config.commons);
   return {
     mode: "production", // 模式
     cache: false,
@@ -71,7 +70,7 @@ export default function (
       extensions: [".js", ".jsx", ".ts", ".tsx", ".json"],
       alias,
     },
-    plugins: createPlugins(pkg),
+    plugins: createPlugins(pkg, config),
     module: {
       rules: createModule(pkg),
     },
@@ -80,15 +79,6 @@ export default function (
       hints: false,
       maxEntrypointSize: 512000,
       maxAssetSize: 512000,
-    },
-    stats: {
-      assets: true,
-      groupModulesByExtension: true,
-      groupModulesByPath: true,
-      nestedModules: true,
-      moduleAssets: true,
-      builtAt: true,
-      assetsSort: "size",
     },
   };
 }

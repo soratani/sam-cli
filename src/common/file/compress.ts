@@ -2,7 +2,7 @@ import { createWriteStream, existsSync, mkdirSync } from "fs";
 import archiver from "archiver";
 import { join } from "path";
 import { Logger } from "@/utils/logger";
-import { PackageInfo } from "@/utils/config";
+import { PackageInfo } from "../config";
 
 export function zip(options: PackageInfo) {
   const { name, version, hash, output, zip } = options;

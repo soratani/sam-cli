@@ -141,5 +141,5 @@ export function findFiles(dir: string) {
   const stat = statSync(dir);
   if (!existsSync(dir)) return [];
   if (stat.isFile()) return [dir];
-  return loopdir(dir).map((item) => item.replace(dir, ''))
+  return loopdir(dir).map((item) => item.replace(`${dir}${path.sep}`, ""));
 }

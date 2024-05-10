@@ -1,26 +1,34 @@
 import { Command } from "commander";
 import { get } from "lodash";
 import { AbstractCommand, Input } from "@/command";
+import Config from "@/common/config";
 
 export class StartCommand extends AbstractCommand {
   public load(program: Command): void {
     program
       .command("start")
       .description("启动")
-      .option("-p, --package [package]", "启动的项目")
+      .option(
+        "-e, --env [env]",
+        "启动环境:[test,production,development]",
+        "production"
+      )
+      .option("-a, --app [app]", "项目")
       .option("-c, --config [config]", "配置文件", "sam.yaml")
       .action(async (command: Command) => {
-        const config = get(command, "config");
-        const packages = get(command, "package");
         const inputs: Input[] = [];
         const options: Input[] = [];
+        const config = get(command, "config");
+        const env = get(command, "env");
+        const app = get(command, "app");
+        const instance = new Config(config, { env });
         options.push({
-          name: "config",
-          value: config,
+          name: "app",
+          value: app,
         });
         options.push({
-          name: "package",
-          value: packages,
+          name: "config",
+          value: instance,
         });
         await this.action.handle(inputs, options);
       });

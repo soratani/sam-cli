@@ -9,9 +9,9 @@ import {
 import FormData from "form-data";
 import { createReadStream } from "fs";
 import { zip } from "./compress";
-import { Common, PackageInfo,  PACKAGE_TYPE, } from "@/utils/config";
 import run from "../webpack/run";
 import start from "../webpack/server";
+import Config, { PACKAGE_TYPE, PackageInfo } from "../config";
 
 export class Package {
   static syncType(type: PACKAGE_TYPE) {
@@ -40,25 +40,34 @@ export class Package {
     }, Promise.resolve({ code: 500, message: "" }));
   }
 
-  static buildAll(packages: Package[], alias: Common[]) {
+  static buildAll(packages: Package[]) {
     return packages.reduce((pre: Promise<IRes>, item) => {
-      return pre.then(() => item.build(alias));
+      return pre.then(() => item.build());
     }, Promise.resolve({ code: 500, message: "" }));
   }
 
-  static startAll(packages: Package[], alias: Common[]) {
+  static startAll(packages: Package[]) {
     return packages.reduce((pre: Promise<IRes>, item) => {
-      return pre.then(() => item.start(alias));
+      return pre.then(() => item.start());
     }, Promise.resolve({ code: 500, message: "" }));
   }
 
   constructor(
     private readonly option: PackageInfo,
+    private readonly config: Config,
     private readonly credential: string
   ) {
     this.hash = this.hash.bind(this);
     this.compress = this.compress.bind(this);
     this.sync = this.sync.bind(this);
+  }
+
+  get name() {
+    return this.option.name;
+  }
+
+  get version() {
+    return this.option.version;
   }
 
   hash() {
@@ -103,7 +112,7 @@ export class Package {
       });
   }
 
-  async build(alias: Common[]) {
+  async build() {
     Logger.info(
       `开始打包 ${this.option.name}:${this.option.type}-${this.option.version}`
     );
@@ -114,7 +123,7 @@ export class Package {
     );
     try {
       task.start();
-      await run(this.option, alias);
+      await run(this.option, this.config);
       task.succeed(
         `打包成功 ${this.option.type}:${this.option.name}-${this.option.version}`
       );
@@ -126,7 +135,7 @@ export class Package {
     }
   }
 
-  async start(alias: Common[]) {
+  async start() {
     Logger.info(
       `开始启动 ${this.option.name}:${this.option.type}-${this.option.version}`
     );
@@ -137,7 +146,7 @@ export class Package {
     );
     try {
       task.start();
-      await start(this.option, alias);
+      await start(this.option, this.config);
       task.succeed(
         `启动成功 ${this.option.type}:${this.option.name}-${this.option.version}`
       );

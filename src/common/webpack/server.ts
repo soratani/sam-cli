@@ -1,16 +1,14 @@
-import { PackageInfo, Common } from "@/utils/config";
+import Config, { PackageInfo } from "@/common/config";
 import Server from "webpack-dev-server";
-import createAlias from "./alias";
 import createConfig from "./config";
 import { webpack } from "webpack";
 
-export default function start(pkg: PackageInfo, common: Common[]) {
-  const alias = createAlias(pkg, common);
-  const config = createConfig(pkg, alias);
-  const com = webpack(config);
+export default function start(pkg: PackageInfo, config: Config) {
+  const webpackConfig = createConfig(pkg, config);
+  const com = webpack(webpackConfig);
   const instance = new Server(com, {
     static: {
-      directory: config.output.path,
+      directory: webpackConfig.output.path,
     },
     historyApiFallback: true,
     compress: true,

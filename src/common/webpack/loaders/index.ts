@@ -1,4 +1,4 @@
-import { PackageInfo, PACKAGE_TYPE } from "@/utils/config";
+import { PackageInfo, PACKAGE_TYPE } from "@/common/config";
 import { RuleSetRule } from "webpack";
 import MiniCssExtractPlugin from "mini-css-extract-plugin";
 import {
