@@ -2,6 +2,7 @@
 import { glob } from "glob";
 import crypto from "crypto";
 import path, { join } from "path";
+import prot from 'tcp-port-used';
 import { existsSync, readFileSync, readdirSync, stat, statSync } from "fs";
 import ora from "ora";
 
@@ -142,4 +143,11 @@ export function findFiles(dir: string) {
   if (!existsSync(dir)) return [];
   if (stat.isFile()) return [dir];
   return loopdir(dir).map((item) => item.replace(`${dir}${path.sep}`, ""));
+}
+
+export function usePort(port: number, host?: string): Promise<number> {
+  return prot.check(port, host).then((value) => {
+    if (!value) return port;
+    return usePort(port + 1, host);
+  }).catch(() => usePort(port + 1, host))
 }

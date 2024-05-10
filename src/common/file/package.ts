@@ -87,73 +87,60 @@ export class Package {
   async sync() {
     const pkg = await this.compress();
     if (!pkg) return { code: 500, message: "" };
-    const { name, version, type } = pkg;
+    const { name, version, type, zip } = pkg;
     const URL = `/package/add_package`;
     const params = Package.params(pkg);
     const config = {
       headers: { ...params.getHeaders(), credential: this.credential },
     };
-    const task = createTask(
-      "bouncingBar",
-      `\n${INFO_PREFIX}`,
-      Logger.baseText(`上传中 ${type}:${name}-${version}`)
-    );
-    Logger.info(`准备上传 ${type} ${name}-${version}`);
+    Logger.info('准备上传')
+    Logger.info(`名称:${name}`);
+    Logger.info(`版本:${version}`);
+    Logger.info(`文件:${zip}`);
+    const task = createTask("bouncingBar",`${INFO_PREFIX}`,Logger.infoText('上传中......'));
     task.start();
     return api
       .post<any, IRes>(URL, params, config)
       .then((res) => {
-        task.succeed(Logger.infoText(`上传完成 ${type}:${name}-${version}`));
+        task.succeed(Logger.infoText('上传完成'));
         return res;
       })
       .catch(() => {
-        task.fail(Logger.errorText(`上传失败 ${type}:${name}-${version}`));
+        task.fail(Logger.errorText(`上传失败`));
         return { code: 500, message: "" };
       });
   }
 
   async build() {
-    Logger.info(
-      `开始打包 ${this.option.name}:${this.option.type}-${this.option.version}`
-    );
-    const task = createTask(
-      "dots",
-      INFO_PREFIX,
-      `打包中 ${this.option.type}:${this.option.name}-${this.option.version}`
-    );
+    const { name, type, version } = this.option;
+    Logger.info('开始打包');
+    Logger.info(`名称:${name}`);
+    Logger.info(`类型:${type}`);
+    Logger.info(`版本:${version}`);
+    const task = createTask("dots",INFO_PREFIX,`打包中...`);
     try {
       task.start();
       await run(this.option, this.config);
-      task.succeed(
-        `打包成功 ${this.option.type}:${this.option.name}-${this.option.version}`
-      );
+      task.succeed('打包成功');
     } catch (error) {
-      console.log(error);
-      task.fail(
-        `打包失败 ${this.option.type}:${this.option.name}-${this.option.version}`
-      );
+      task.fail('打包失败');
     }
   }
 
   async start() {
-    Logger.info(
-      `开始启动 ${this.option.name}:${this.option.type}-${this.option.version}`
-    );
-    const task = createTask(
-      "dots",
-      INFO_PREFIX,
-      `启动中 ${this.option.type}:${this.option.name}-${this.option.version}`
-    );
+    const { name, type, version } = this.option;
+    Logger.info('开始启动');
+    Logger.info(`名称:${name}`);
+    Logger.info(`类型:${type}`);
+    Logger.info(`版本:${version}`);
+    const task = createTask("dots",INFO_PREFIX,`启动中...`);
     try {
       task.start();
-      await start(this.option, this.config);
-      task.succeed(
-        `启动成功 ${this.option.type}:${this.option.name}-${this.option.version}`
-      );
+      const server = await start(this.option, this.config);
+      task.succeed('启动成功');
+      Logger.info(`地址: http://${server.host}:${server.port}`)
     } catch (error) {
-      task.fail(
-        `启动失败 ${this.option.type}:${this.option.name}-${this.option.version}`
-      );
+      task.fail('启动失败');
     }
   }
 }

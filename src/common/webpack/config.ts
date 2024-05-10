@@ -80,5 +80,6 @@ export default function (pkg: PackageInfo, config: Config): Configuration {
       maxEntrypointSize: 512000,
       maxAssetSize: 512000,
     },
+    stats: false
   };
 }
