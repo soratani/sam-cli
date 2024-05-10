@@ -3,11 +3,17 @@ import Server from "webpack-dev-server";
 import createConfig from "./config";
 import { webpack } from "webpack";
 import { usePort } from "@/utils";
+import { WebpackLogger } from "./logger";
+
+function getInfrastructureLogger(name: string) {
+    return new WebpackLogger()
+}
 
 export default async function start(pkg: PackageInfo, config: Config) {
   const webpackConfig = createConfig(pkg, config);
   const com = webpack(webpackConfig);
   const port = await usePort(3000, '0.0.0.0');
+  com.getInfrastructureLogger = getInfrastructureLogger.bind(com);
   const instance = new Server(com, {
     static: {
       directory: webpackConfig.output.path,
@@ -18,6 +24,7 @@ export default async function start(pkg: PackageInfo, config: Config) {
     open: true,
     host: '0.0.0.0',
     port
+    
   });
   return new Promise<{ host: string, port: number }>((resolve, reject) => {
     instance.startCallback((error) => {

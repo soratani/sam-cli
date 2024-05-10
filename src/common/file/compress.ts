@@ -9,14 +9,16 @@ export function zip(options: PackageInfo) {
   if (!existsSync(zip)) mkdirSync(zip, { recursive: true });
   const outputPath = join(zip, `${hash}.zip`);
   const outputStream = createWriteStream(outputPath);
+  Logger.info('开始压缩');
+  Logger.info(`名称:${name}`);
+  Logger.info(`版本:${version}`);
+  Logger.info(`hash:${hash}`);
   return new Promise<PackageInfo>((resolve) => {
     const archive = archiver("zip", {
       zlib: { level: 9 }, // Sets the compression level.
     });
     outputStream.on("close", function () {
-      Logger.info(
-        `${name}_${version}_${hash}.zip ${archive.pointer()} total bytes`
-      );
+      Logger.info(`bytes:${archive.pointer()}`);
       resolve({ ...options, zip: outputPath });
     });
     outputStream.on("end", function () {
