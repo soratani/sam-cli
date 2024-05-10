@@ -136,8 +136,9 @@ export class Package {
     const task = createTask("dots",INFO_PREFIX,`启动中...`);
     try {
       task.start();
-      await start(this.option, this.config);
+      const server = await start(this.option, this.config);
       task.succeed('启动成功');
+      Logger.info(`地址: http://${server.host}:${server.port}`)
     } catch (error) {
       task.fail('启动失败');
     }
