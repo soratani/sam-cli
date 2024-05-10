@@ -50,6 +50,9 @@ devDependencies:
   '@types/ssh2-sftp-client':
     specifier: ^9.0.0
     version: 9.0.3
+  '@types/tcp-port-used':
+    specifier: ^1.0.4
+    version: 1.0.4
   '@types/webpack':
     specifier: ^5.28.5
     version: 5.28.5(webpack-cli@5.1.4)
@@ -2597,6 +2600,10 @@ packages:
     resolution: {integrity: sha512-YcT8jP5F8NzWeevWvcyrrLB3zcneVjzYY9ZDSMAMboI+2zR1qYWFhwsyOFVzT7Jorn67vqxC0FRiw8YyG9P1ww==}
     dependencies:
       '@types/node': 18.19.31
+    dev: true
+
+  /@types/tcp-port-used@1.0.4:
+    resolution: {integrity: sha512-0vQ4fz9TTM4bCdllYWEJ2JHBUXR9xqPtc70dJ7BMRDVfvZyYdrgey3nP5RRcVj+qAgnHJM8r9fvgrfnPMxdnhA==}
     dev: true
 
   /@types/webpack@5.28.5(webpack-cli@5.1.4):
