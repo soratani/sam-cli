@@ -44,16 +44,16 @@ function optimization(pkg: PackageInfo) {
 }
 
 function createOutput(pkg: PackageInfo) {
-  const prefix = [PACKAGE_TYPE.APP].includes(pkg.type) ? "static" : "/static";
   const output = {
     path: pkg.output,
-    filename: `${prefix}/[name].[contenthash:8].js`,
+    filename: "static/[name].[contenthash:8].js",
     clean: true,
   };
   if ([PACKAGE_TYPE.APP].includes(pkg.type)) {
     output["filename"] = "[name].js";
   } else {
-    output["chunkFilename"] = `${prefix}/[name].[contenthash:8].chunk.js`;
+    output["publicPath"] = "/";
+    output["chunkFilename"] = "static/[name].[contenthash:8].chunk.js";
   }
   return output;
 }
