@@ -121,7 +121,7 @@ export default function createModule(pkg: PackageInfo): RuleSetRule[] {
         },
       },
       generator: {
-        filename: `${static}/image/[name].[contenthash:8][ext]`,
+        filename: `${prefix}/image/[name].[contenthash:8][ext]`,
       },
     },
     {
