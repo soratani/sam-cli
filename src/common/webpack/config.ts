@@ -3,7 +3,7 @@ import CssMinimizerWebpackPlugin from "css-minimizer-webpack-plugin";
 import { Configuration } from "webpack";
 import createPlugins from "./plugins";
 import createModule from "./loader";
-import Config, { PACKAGE_TYPE, PackageInfo } from "../config";
+import Config, { ENV, PACKAGE_TYPE, PackageInfo } from "../config";
 import createAlias from "./alias";
 
 function optimization(pkg: PackageInfo) {
@@ -60,11 +60,12 @@ function createOutput(pkg: PackageInfo) {
 export default function (pkg: PackageInfo, config: Config): Configuration {
   const output = createOutput(pkg);
   const alias = createAlias(pkg, config.commons);
+  const dev = [ENV.development].includes(config.env);
   return {
-    mode: "production", // 模式
+    mode: dev ? "development" : "production", // 模式
     cache: false,
     entry: pkg.main,
-    devtool: false,
+    devtool: dev ? "inline-source-map" : false,
     output,
     resolve: {
       extensions: [".js", ".jsx", ".ts", ".tsx", ".json"],
@@ -80,6 +81,6 @@ export default function (pkg: PackageInfo, config: Config): Configuration {
       maxEntrypointSize: 512000,
       maxAssetSize: 512000,
     },
-    stats: false
+    stats: false,
   };
 }

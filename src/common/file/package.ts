@@ -114,6 +114,7 @@ export class Package {
   async build() {
     const { name, type, version } = this.option;
     Logger.info('开始打包');
+    Logger.info(`环境:${this.config.env}`);
     Logger.info(`名称:${name}`);
     Logger.info(`类型:${type}`);
     Logger.info(`版本:${version}`);
@@ -123,6 +124,7 @@ export class Package {
       await run(this.option, this.config);
       task.succeed('打包成功');
     } catch (error) {
+      console.log(error);
       task.fail('打包失败');
     }
   }
@@ -130,6 +132,7 @@ export class Package {
   async start() {
     const { name, type, version } = this.option;
     Logger.info('开始启动');
+    Logger.info(`环境:${this.config.env}`);
     Logger.info(`名称:${name}`);
     Logger.info(`类型:${type}`);
     Logger.info(`版本:${version}`);
@@ -137,9 +140,10 @@ export class Package {
     try {
       task.start();
       const server = await start(this.option, this.config);
-      task.succeed('启动成功');
       Logger.info(`地址: http://${server.host}:${server.port}`)
+      task.succeed("启动成功");
     } catch (error) {
+      console.log(error);
       task.fail('启动失败');
     }
   }
