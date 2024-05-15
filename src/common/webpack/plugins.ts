@@ -12,7 +12,6 @@ import { readFileSync } from "fs";
 import { join } from "path";
 
 export default function createPlugins(pkg: PackageInfo, config: Config) {
-  const prefix = [PACKAGE_TYPE.APP].includes(pkg.type) ? "static" : "/static";
   const assets = findFiles(pkg.public);
   const templateDir = join(__dirname, "../../../templates");
   const templateContent = readFileSync(
@@ -35,8 +34,8 @@ export default function createPlugins(pkg: PackageInfo, config: Config) {
     ],
   });
   const css = new MiniCssExtractPlugin({
-    filename: `${prefix}/style/[name].[contenthash:8].css`,
-    chunkFilename: `${prefix}/style/[id].[contenthash:8].chunk.css`,
+    filename: `static/style/[name].[contenthash:8].css`,
+    chunkFilename: `static/style/[id].[contenthash:8].chunk.css`,
   });
   const template = new HtmlWebpackPlugin({
     templateContent,

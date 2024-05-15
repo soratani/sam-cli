@@ -5,7 +5,6 @@ import autoprefixer from "autoprefixer";
 import pxtorem from "postcss-pxtorem";
 
 export default function createModule(pkg: PackageInfo): RuleSetRule[] {
-  const prefix = [PACKAGE_TYPE.APP].includes(pkg.type) ? "static" : "/static";
   const styleLess: any = {
     test: /\.(css|less)$/,
     exclude: /\.module\.(css|less)$/,
@@ -121,14 +120,14 @@ export default function createModule(pkg: PackageInfo): RuleSetRule[] {
         },
       },
       generator: {
-        filename: `${prefix}/image/[name].[contenthash:8][ext]`,
+        filename: `static/image/[name].[contenthash:8][ext]`,
       },
     },
     {
       test: /\.(woff2?|eot|ttf|otf|mp3|mp4|avi|mkv)$/i,
       type: "asset/resource",
       generator: {
-        filename: `${prefix}/media/[name].[contenthash:8][ext]`,
+        filename: `static/media/[name].[contenthash:8][ext]`,
       },
     },
   ];
