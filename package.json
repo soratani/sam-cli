@@ -1,6 +1,6 @@
 {
   "name": "@frade-sam/assets-cli",
-  "version": "0.1.8",
+  "version": "0.1.9",
   "description": "",
   "scripts": {
     "build": "rm -rf lib && tsc -p tsconfig.json && tsc-alias",
