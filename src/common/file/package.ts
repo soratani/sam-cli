@@ -140,8 +140,8 @@ export class Package {
     try {
       task.start();
       const server = await start(this.option, this.config);
-      Logger.info(`地址: http://${server.host}:${server.port}`)
       task.succeed("启动成功");
+      Logger.info(`地址: http://${server.host}:${server.port}`)
     } catch (error) {
       console.log(error);
       task.fail('启动失败');
