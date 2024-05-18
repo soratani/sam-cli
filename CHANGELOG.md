@@ -1,5 +1,11 @@
 # @frade-sam/assets-cli
 
+## 0.1.10
+
+### Patch Changes
+
+- be9160f: 0.1.10
+
 ## 0.1.9
 
 ### Patch Changes
