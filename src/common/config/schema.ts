@@ -5,9 +5,15 @@ const builderSchema = joi.object().keys({
   main: joi.string().required(),
 });
 
+const proxySchema = joi.object().keys({
+  path: joi.string().required(),
+  target: joi.string().required(),
+});
+
 const packageSchema = joi.object().keys({
   name: joi.string().required(),
   source: joi.string().required(),
+  proxy: joi.array().items(proxySchema),
   builder: joi.array().items(builderSchema).required(),
 });
 
