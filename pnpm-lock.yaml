@@ -1,10 +1,5 @@
 lockfileVersion: '6.0'
 
-dependencies:
-  '@frade-sam/samtools':
-    specifier: ^1.3.0
-    version: 1.3.0
-
 devDependencies:
   '@babel/core':
     specifier: 7.23.7
