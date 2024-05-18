@@ -19,6 +19,11 @@ export enum ENV {
   development = "development",
 }
 
+export interface IProxy {
+  path: string;
+  target: string;
+}
+
 export interface Builder {
   type: PACKAGE_TYPE;
   main: string;
@@ -26,6 +31,7 @@ export interface Builder {
 
 export interface IPackage {
   name: string;
+  proxy?: IProxy[];
   source: string;
   builder: Builder[];
 }
@@ -120,6 +126,7 @@ export default class Config {
       const buildDir = join(root, ".builder");
       const zipDir = join(root, ".zip");
       const pkgJson = join(root, data.source, "package.json");
+      const proxy = get(data, 'proxy', []);
       const pkgStat = statSync(pkgDir);
       if (!pkgStat.isDirectory())
         throw new Error(`${data.name} - source 不是文件夹`);
@@ -143,6 +150,7 @@ export default class Config {
             type: item.type,
             output: itemBuildDir,
             zip: itemZipDir,
+            proxy,
             hash: "",
             main,
             version,

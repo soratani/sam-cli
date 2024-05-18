@@ -1,5 +1,5 @@
 import Config, { PackageInfo } from "@/common/config";
-import Server from "webpack-dev-server";
+import Server, { ProxyConfigArrayItem } from "webpack-dev-server";
 import createConfig from "./config";
 import { webpack } from "webpack";
 import { usePort } from "@/utils";
@@ -9,7 +9,7 @@ function getInfrastructureLogger(name: string) {
     return new WebpackLogger()
 }
 
-export default async function start(pkg: PackageInfo, config: Config) {
+export default async function start(pkg: PackageInfo, config: Config, proxy: ProxyConfigArrayItem[]) {
   const webpackConfig = createConfig(pkg, config);
   const com = webpack(webpackConfig);
   const port = await usePort(3000, '0.0.0.0');
@@ -18,6 +18,7 @@ export default async function start(pkg: PackageInfo, config: Config) {
     static: {
       directory: webpackConfig.output.path,
     },
+    proxy: proxy,
     historyApiFallback: true,
     compress: true,
     hot: true,

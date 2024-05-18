@@ -12,6 +12,7 @@ import { zip } from "./compress";
 import run from "../webpack/run";
 import start from "../webpack/server";
 import Config, { PACKAGE_TYPE, PackageInfo } from "../config";
+import { ProxyConfigArrayItem } from "webpack-dev-server";
 
 export class Package {
   static syncType(type: PACKAGE_TYPE) {
@@ -60,6 +61,15 @@ export class Package {
     this.hash = this.hash.bind(this);
     this.compress = this.compress.bind(this);
     this.sync = this.sync.bind(this);
+  }
+
+  get proxy(): ProxyConfigArrayItem[] {
+    const data = this.option.proxy;
+    const targets = Array.from(new Set(data.map(item => item.target)));
+    return targets.reduce((pre, item) => {
+      const context = data.filter((i) => i.target === item).map(i => i.path);
+      return pre.concat([{ context, target: item, changeOrigin: true }]);
+    },[] as ProxyConfigArrayItem[]);
   }
 
   get name() {
@@ -139,7 +149,7 @@ export class Package {
     const task = createTask("dots",INFO_PREFIX,`启动中...`);
     try {
       task.start();
-      const server = await start(this.option, this.config);
+      const server = await start(this.option, this.config, this.proxy);
       task.succeed("启动成功");
       Logger.info(`地址: http://${server.host}:${server.port}`)
     } catch (error) {
