@@ -47,13 +47,15 @@ function createOutput(pkg: PackageInfo) {
   const output = {
     path: pkg.output,
     filename: "static/[name].[contenthash:8].js",
+    chunkFilename: "static/[name].[contenthash:8].chunk.js",
     clean: true,
   };
   if ([PACKAGE_TYPE.APP].includes(pkg.type)) {
     output["filename"] = "[name].js";
+    output["chunkFilename"] = "static/[name].chunk.js";
+    output["publicPath"] = `/${pkg.name}`;
   } else {
     output["publicPath"] = "/";
-    output["chunkFilename"] = "static/[name].[contenthash:8].chunk.js";
   }
   return output;
 }

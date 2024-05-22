@@ -63,10 +63,9 @@ export default function createPlugins(pkg: PackageInfo, config: Config) {
     }),
     new ModuleConcatenationPlugin(),
   ];
-  const isCssChunk = ![PACKAGE_TYPE.APP].includes(pkg.type);
-  const isTemplate =
-    ![PACKAGE_TYPE.APP].includes(pkg.type) ||
-    [ENV.development].includes(config.env);
+  // const isCssChunk = ![PACKAGE_TYPE.APP].includes(pkg.type);
+  const isCssChunk = true;
+  const isTemplate = isCssChunk || [ENV.development].includes(config.env);
   const isCopy = isTemplate && pkg.public;
   if (isCopy) plugins.push(copy);
   if (isCssChunk) plugins.push(css);

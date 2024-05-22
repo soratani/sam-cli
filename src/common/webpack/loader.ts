@@ -9,8 +9,8 @@ export default function createModule(pkg: PackageInfo): RuleSetRule[] {
     test: /\.(css|less)$/,
     exclude: /\.module\.(css|less)$/,
     use: [
+      MiniCssExtractPlugin.loader,
       "css-loader",
-
       {
         loader: "postcss-loader",
         options: {
@@ -44,6 +44,7 @@ export default function createModule(pkg: PackageInfo): RuleSetRule[] {
   const styleModuleLess: any = {
     test: /\.module.(css|less)$/,
     use: [
+      MiniCssExtractPlugin.loader,
       {
         loader: "css-loader",
         options: {
@@ -131,13 +132,13 @@ export default function createModule(pkg: PackageInfo): RuleSetRule[] {
       },
     },
   ];
-  if (![PACKAGE_TYPE.APP].includes(pkg.type)) {
-    styleLess.use.unshift(MiniCssExtractPlugin.loader);
-    styleModuleLess.use.unshift(MiniCssExtractPlugin.loader);
-  } else {
-    styleLess.use.unshift("style-loader");
-    styleModuleLess.use.unshift("style-loader");
-  }
+  // if (![PACKAGE_TYPE.APP].includes(pkg.type)) {
+  //   styleLess.use.unshift(MiniCssExtractPlugin.loader);
+  //   styleModuleLess.use.unshift(MiniCssExtractPlugin.loader);
+  // } else {
+  //   styleLess.use.unshift("style-loader");
+  //   styleModuleLess.use.unshift("style-loader");
+  // }
   if (pkg.theme) {
     styleLess.use.push({
       loader: "style-resources-loader",
