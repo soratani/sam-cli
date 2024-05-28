@@ -54,6 +54,8 @@ function createOutput(pkg: PackageInfo) {
     output["filename"] = "[name].js";
     output["chunkFilename"] = "static/[name].chunk.js";
     output["publicPath"] = `${pkg.name}`;
+  } else {
+    output["publicPath"] = "/";
   }
   return output;
 }
