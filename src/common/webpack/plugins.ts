@@ -12,6 +12,13 @@ import { readFileSync } from "fs";
 import { join } from "path";
 
 export default function createPlugins(pkg: PackageInfo, config: Config) {
+  const isApp = [PACKAGE_TYPE.APP].includes(pkg.type);
+  let cssFilename = "static/style/[name].[contenthash:8].css";
+  let cssChunkFilename = "static/style/[id].[contenthash:8].chunk.css";
+  if (isApp) {
+    cssFilename = "static/style/[name].css";
+    cssChunkFilename = "static/style/[name].chunk.css";
+  }
   const assets = findFiles(pkg.public);
   const templateDir = join(__dirname, "../../../templates");
   const templateContent = readFileSync(
@@ -33,10 +40,6 @@ export default function createPlugins(pkg: PackageInfo, config: Config) {
       },
     ],
   });
-  const css = new MiniCssExtractPlugin({
-    filename: `static/style/[name].[contenthash:8].css`,
-    chunkFilename: `static/style/[id].[contenthash:8].chunk.css`,
-  });
   const template = new HtmlWebpackPlugin({
     templateContent,
     filename: "index.html",
@@ -57,6 +60,10 @@ export default function createPlugins(pkg: PackageInfo, config: Config) {
         APP: JSON.stringify(pkg.name),
       },
     }),
+    new MiniCssExtractPlugin({
+      filename: cssFilename,
+      chunkFilename: cssChunkFilename,
+    }),
     new webpack.ProvidePlugin({
       React: "react", // 这样在任何地方都可以直接使用React，无需import
       ReactDOM: "react-dom",
@@ -64,12 +71,9 @@ export default function createPlugins(pkg: PackageInfo, config: Config) {
     new ModuleConcatenationPlugin(),
   ];
   const isCssChunk = ![PACKAGE_TYPE.APP].includes(pkg.type);
-  const isTemplate =
-    ![PACKAGE_TYPE.APP].includes(pkg.type) ||
-    [ENV.development].includes(config.env);
+  const isTemplate = isCssChunk || [ENV.development].includes(config.env);
   const isCopy = isTemplate && pkg.public;
   if (isCopy) plugins.push(copy);
-  if (isCssChunk) plugins.push(css);
   if (isTemplate) plugins.push(template);
   if (pkg.public && isTemplate) plugins.push(publicFiles);
   return plugins;
