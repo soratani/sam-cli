@@ -2,7 +2,7 @@ import TerserWebpackPlugin from "terser-webpack-plugin";
 import CssMinimizerWebpackPlugin from "css-minimizer-webpack-plugin";
 import { Configuration } from "webpack";
 import createPlugins from "./plugins";
-import createModule from "./loader";
+import createModule from "./loaders";
 import Config, { ENV, PACKAGE_TYPE, PackageInfo } from "../config";
 import createAlias from "./alias";
 
@@ -53,9 +53,7 @@ function createOutput(pkg: PackageInfo) {
   if ([PACKAGE_TYPE.APP].includes(pkg.type)) {
     output["filename"] = "[name].js";
     output["chunkFilename"] = "static/[name].chunk.js";
-    output["publicPath"] = `/${pkg.name}`;
-  } else {
-    output["publicPath"] = "/";
+    output["publicPath"] = `${pkg.name}`;
   }
   return output;
 }
@@ -66,7 +64,7 @@ export default function (pkg: PackageInfo, config: Config): Configuration {
   const dev = [ENV.development].includes(config.env);
   return {
     mode: dev ? "development" : "production", // 模式
-    cache: false,
+    cache: true,
     entry: pkg.main,
     devtool: dev ? "inline-source-map" : false,
     output,

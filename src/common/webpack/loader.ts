@@ -91,6 +91,7 @@ export default function createModule(pkg: PackageInfo): RuleSetRule[] {
     test: /\.(js|ts)x?$/,
     exclude: /node_modules/,
     use: [
+      "cache-loader",
       {
         loader: "babel-loader",
         options: {
@@ -132,13 +133,6 @@ export default function createModule(pkg: PackageInfo): RuleSetRule[] {
       },
     },
   ];
-  // if (![PACKAGE_TYPE.APP].includes(pkg.type)) {
-  //   styleLess.use.unshift(MiniCssExtractPlugin.loader);
-  //   styleModuleLess.use.unshift(MiniCssExtractPlugin.loader);
-  // } else {
-  //   styleLess.use.unshift("style-loader");
-  //   styleModuleLess.use.unshift("style-loader");
-  // }
   if (pkg.theme) {
     styleLess.use.push({
       loader: "style-resources-loader",
