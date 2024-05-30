@@ -28,6 +28,10 @@ function optimization(pkg: PackageInfo) {
           priority: 10,
           chunks: "all",
         },
+        fingerprintjs: {
+          name: "fingerprintjs",
+          test: /[\\/]node_modules[\\/]@fingerprintjs[\\/]fingerprintjs[\\/]/,
+        },
         common: {
           name: "common",
           minChunks: 2,
@@ -55,7 +59,7 @@ function createOutput(pkg: PackageInfo) {
     output["chunkFilename"] = "static/[name].chunk.js";
     output["publicPath"] = `${pkg.name}`;
   } else {
-    output["publicPath"] = `${pkg.name}`;
+    output["publicPath"] = "/";
   }
   return output;
 }
@@ -64,6 +68,7 @@ export default function (pkg: PackageInfo, config: Config): Configuration {
   const output = createOutput(pkg);
   const alias = createAlias(pkg, config.commons);
   const dev = [ENV.development].includes(config.env);
+
   return {
     mode: dev ? "development" : "production", // 模式
     cache: true,
@@ -73,6 +78,7 @@ export default function (pkg: PackageInfo, config: Config): Configuration {
     resolve: {
       extensions: [".js", ".jsx", ".ts", ".tsx", ".json"],
       alias,
+      fallback: alias,
     },
     plugins: createPlugins(pkg, config),
     module: {

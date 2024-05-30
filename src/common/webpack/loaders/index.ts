@@ -1,4 +1,4 @@
-import { PackageInfo, PACKAGE_TYPE } from "@/common/config";
+import { PackageInfo } from "@/common/config";
 import { RuleSetRule } from "webpack";
 import MiniCssExtractPlugin from "mini-css-extract-plugin";
 import {
@@ -14,7 +14,6 @@ const reactBabel: any = {
   test: /\.(js|ts)x?$/,
   exclude: /node_modules/,
   use: [
-    "cache-loader",
     {
       loader: "babel-loader",
       options: {
