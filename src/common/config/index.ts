@@ -7,11 +7,20 @@ import { get } from "lodash";
 import { Package } from "../file";
 
 export enum PACKAGE_TYPE {
-  APP = "app",
-  TEMPLATE = "template",
-  H5 = "h5",
-  WEB = "web",
+  TEMPLATE, // 模版
+  APP, // app
+  H5, // h5
+  WEB, // web
+  OUTHER, // 其他
 }
+
+export const packageTypeMap = {
+  app: PACKAGE_TYPE.APP,
+  template: PACKAGE_TYPE.TEMPLATE,
+  h5: PACKAGE_TYPE.H5,
+  web: PACKAGE_TYPE.WEB,
+  outher: PACKAGE_TYPE.OUTHER,
+};
 
 export enum ENV {
   test = "test",

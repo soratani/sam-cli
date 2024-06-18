@@ -26,12 +26,13 @@ export class Package {
   }
 
   static params(pkg: PackageInfo) {
-    const { type, zip, name, version } = pkg;
+    const { type, zip, name, hash, version } = pkg;
     const formdata = new FormData();
     formdata.append("file", createReadStream(zip));
     formdata.append("code", name);
     formdata.append("version", version);
     formdata.append("type", type);
+    formdata.append("hash", hash);
     return formdata;
   }
 
@@ -97,8 +98,8 @@ export class Package {
   async sync() {
     const pkg = await this.compress();
     if (!pkg) return { code: 500, message: "" };
-    const { name, version, type, zip } = pkg;
-    const URL = `/package/add_package`;
+    const { name, version, zip } = pkg;
+    const URL = `/upload/base/package`;
     const params = Package.params(pkg);
     const config = {
       headers: { ...params.getHeaders(), credential: this.credential },
