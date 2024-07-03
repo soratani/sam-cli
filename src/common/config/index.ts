@@ -135,7 +135,7 @@ export default class Config {
       const buildDir = join(root, ".builder");
       const zipDir = join(root, ".zip");
       const pkgJson = join(root, data.source, "package.json");
-      const proxy = get(data, 'proxy', []);
+      const proxy = get(data, "proxy", []);
       const pkgStat = statSync(pkgDir);
       if (!pkgStat.isDirectory())
         throw new Error(`${data.name} - source 不是文件夹`);
@@ -205,12 +205,16 @@ export default class Config {
     return get(this.options, "env", ENV.production);
   }
 
+  get credential(): string {
+    return get(this.options, "credential", "");
+  }
+
   get packages(): Package[] {
-    const credential = get(this.options, "credential", "");
     return this.data.package
       .reduce((pre, item) => pre.concat(this.parsePackage(item)), [])
-      .map((item) => new Package(item, this, credential));
+      .map((item) => new Package(item, this));
   }
+
   get commons(): Common[] {
     const _commons = get(this.data, "common", []);
     return _commons.map((item) => this.parseCommon(item)).filter(Boolean);
