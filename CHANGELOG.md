@@ -1,5 +1,11 @@
 # @frade-sam/assets-cli
 
+## 0.1.13
+
+### Patch Changes
+
+- 1d20433: 0.1.13
+
 ## 0.1.12
 
 ### Patch Changes
