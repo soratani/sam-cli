@@ -1,8 +1,8 @@
-import { PACKAGE_TYPE, PackageInfo } from "@/common/config";
+import { APPTYPE, ApplicationInfo } from "@/common/config";
 
-export function createAssetLoader(pkg: PackageInfo, maxSize = 8 * 1024) {
+export function createAssetLoader(pkg: ApplicationInfo, maxSize = 8 * 1024) {
   let filename = "static/image/[name].[contenthash:8][ext]";
-  if ([PACKAGE_TYPE.APP].includes(pkg.type)) {
+  if ([APPTYPE.APP].includes(pkg.type)) {
     filename = "image/[name].[ext]";
   }
   return {
@@ -19,9 +19,9 @@ export function createAssetLoader(pkg: PackageInfo, maxSize = 8 * 1024) {
   };
 }
 
-export function createMediaLoader(pkg: PackageInfo) {
+export function createMediaLoader(pkg: ApplicationInfo) {
   let filename = "static/media/[name].[contenthash:8][ext]";
-  if ([PACKAGE_TYPE.APP].includes(pkg.type)) {
+  if ([APPTYPE.APP].includes(pkg.type)) {
     filename = "media/[name].[ext]";
   }
   return {

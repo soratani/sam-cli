@@ -11,22 +11,23 @@ import { createReadStream } from "fs";
 import { zip } from "./compress";
 import run from "../webpack/run";
 import start from "../webpack/server";
-import Config, { PACKAGE_TYPE, PackageInfo } from "../config";
+import Config, { ApplicationInfo, APPTYPE } from "../config";
 import { ProxyConfigArrayItem } from "webpack-dev-server";
 import { get } from "lodash";
+import { App } from "./app";
 
 export class Package {
-  static syncType(type: PACKAGE_TYPE) {
+  static syncType(type: APPTYPE) {
     const map = {
-      server: [PACKAGE_TYPE.H5, PACKAGE_TYPE.WEB],
-      cos: [PACKAGE_TYPE.APP, PACKAGE_TYPE.TEMPLATE],
+      server: [APPTYPE.H5, APPTYPE.WEB],
+      cos: [APPTYPE.APP, APPTYPE.TEMPLATE],
     };
     return Object.entries(map)
       .filter(([, keys]) => keys.includes(type))
       .map(([key]) => key);
   }
 
-  static params(pkg: PackageInfo) {
+  static params(pkg: ApplicationInfo) {
     const { type, zip, name, hash, version } = pkg;
     const formdata = new FormData();
     formdata.append("file", createReadStream(zip));
@@ -37,26 +38,26 @@ export class Package {
     return formdata;
   }
 
-  static syncAll(packages: Package[]) {
+  static syncAll(packages: App[]) {
     return packages.reduce((pre: Promise<IRes>, item) => {
       return pre.then(() => item.sync());
     }, Promise.resolve({ code: 500, message: "" }));
   }
 
-  static buildAll(packages: Package[]) {
+  static buildAll(packages: App[]) {
     return packages.reduce((pre: Promise<IRes>, item) => {
       return pre.then(() => item.build());
     }, Promise.resolve({ code: 500, message: "" }));
   }
 
-  static startAll(packages: Package[]) {
+  static startAll(packages: App[]) {
     return packages.reduce((pre: Promise<IRes>, item) => {
       return pre.then(() => item.start());
     }, Promise.resolve({ code: 500, message: "" }));
   }
 
   constructor(
-    private readonly option: PackageInfo,
+    private readonly option: ApplicationInfo,
     private readonly config: Config
   ) {
     this.hash = this.hash.bind(this);

@@ -15,7 +15,7 @@ export class CompressAction extends AbstractAction {
     try {
       Logger.info("准备打包");
       if (app) {
-        const pkg = config.packages.find((item) => item.name == app);
+        const pkg = config.apps.find((item) => item.name == app);
         if (!pkg) throw new Error("打包异常");
         await pkg.build();
         Logger.info("准备上传");
@@ -25,9 +25,9 @@ export class CompressAction extends AbstractAction {
         }
         return Logger.info("上传资源包完毕");
       }
-      await Package.buildAll(config.packages);
+      await Package.buildAll(config.apps);
       Logger.info("准备上传");
-      const task = await Package.syncAll(config.packages);
+      const task = await Package.syncAll(config.apps);
       if (task.code !== 1) {
         Logger.error(task.message);
       }

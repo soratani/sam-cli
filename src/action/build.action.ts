@@ -15,12 +15,12 @@ export class BuildAction extends AbstractAction {
     try {
       Logger.info("准备打包");
       if (app) {
-        const pkgs = config.packages.filter((item) => item.name == app);
+        const pkgs = config.apps.filter((item) => item.name == app);
         if (!pkgs.length) throw new Error("打包异常");
         await Package.buildAll(pkgs);
         return;
       }
-      await Package.buildAll(config.packages);
+      await Package.buildAll(config.apps);
     } catch (error) {
       Logger.error(error.message);
     }

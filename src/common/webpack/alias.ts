@@ -1,8 +1,8 @@
 import { get } from "lodash";
 import { join } from "path";
-import { Common, PackageInfo } from "@/common/config";
+import { ApplicationInfo, IPackageJson } from "@/common/config";
 
-function createCommon(common: Common[]) {
+function createCommon(common: IPackageJson[]) {
   return common.reduce((pre, item) => {
     pre[item.name] = item.main;
     return pre;
@@ -21,14 +21,14 @@ function genValue(value: string) {
   return value;
 }
 
-export default function createAlias(pkg: PackageInfo, common: Common[]) {
+export default function createAlias(pkg: ApplicationInfo, common: IPackageJson[]) {
   const commons = createCommon(common);
-  const tsconfigPath = join(pkg.source, "tsconfig.json");
+  const tsconfigPath = join(pkg.root, "tsconfig.json");
   const tsconfig = require(tsconfigPath);
   const paths = get(tsconfig, "compilerOptions.paths", {});
   return Object.entries(paths).reduce((pre, item) => {
     const key = genKey(get(item, "0"));
-    const value = join(pkg.source, genValue(get(item, "1.0")));
+    const value = join(pkg.root, genValue(get(item, "1.0")));
     pre[key] = value;
     return pre;
   }, commons);

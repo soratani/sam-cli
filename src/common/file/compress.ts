@@ -2,9 +2,9 @@ import { createWriteStream, existsSync, mkdirSync } from "fs";
 import archiver from "archiver";
 import { join } from "path";
 import { Logger } from "@/utils/logger";
-import { PackageInfo, packageTypeMap } from "../config";
+import { ApplicationInfo, packageTypeMap } from "../config";
 
-export function zip(options: PackageInfo) {
+export function zip(options: ApplicationInfo) {
   const { name, version, hash, output, type, zip } = options;
   if (!existsSync(zip)) mkdirSync(zip, { recursive: true });
   const outputPath = join(zip, `${hash}.zip`);
@@ -13,7 +13,7 @@ export function zip(options: PackageInfo) {
   Logger.info(`名称:${name}`);
   Logger.info(`版本:${version}`);
   Logger.info(`hash:${hash}`);
-  return new Promise<PackageInfo>((resolve) => {
+  return new Promise<ApplicationInfo>((resolve) => {
     const archive = archiver("zip", {
       zlib: { level: 9 }, // Sets the compression level.
     });
