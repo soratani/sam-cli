@@ -1,4 +1,4 @@
-import { PackageInfo } from "@/common/config";
+import { ApplicationInfo } from "@/common/config";
 import { RuleSetRule } from "webpack";
 import MiniCssExtractPlugin from "mini-css-extract-plugin";
 import {
@@ -33,7 +33,7 @@ const reactBabel: any = {
   ],
 };
 
-export default function createModule(pkg: PackageInfo): RuleSetRule[] {
+export default function createModule(pkg: ApplicationInfo): RuleSetRule[] {
   const styleLess: any = {
     test: /\.(css|less)$/,
     exclude: /\.module\.(css|less)$/,

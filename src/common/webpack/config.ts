@@ -3,10 +3,10 @@ import CssMinimizerWebpackPlugin from "css-minimizer-webpack-plugin";
 import { Configuration } from "webpack";
 import createPlugins from "./plugins";
 import createModule from "./loaders";
-import Config, { ENV, PACKAGE_TYPE, PackageInfo } from "../config";
+import Config, { ENV, APPTYPE, ApplicationInfo } from "../config";
 import createAlias from "./alias";
 
-function optimization(pkg: PackageInfo) {
+function optimization(pkg: ApplicationInfo) {
   const opt: any = {
     minimize: true,
     usedExports: true,
@@ -17,7 +17,7 @@ function optimization(pkg: PackageInfo) {
       }),
     ],
   };
-  if (![PACKAGE_TYPE.APP].includes(pkg.type)) {
+  if (![APPTYPE.APP].includes(pkg.type)) {
     opt["splitChunks"] = {
       chunks: "all",
       name: false,
@@ -47,14 +47,14 @@ function optimization(pkg: PackageInfo) {
   return opt;
 }
 
-function createOutput(pkg: PackageInfo) {
+function createOutput(pkg: ApplicationInfo) {
   const output = {
     path: pkg.output,
     filename: "static/[name].[contenthash:8].js",
     chunkFilename: "static/[name].[contenthash:8].chunk.js",
     clean: true,
   };
-  if ([PACKAGE_TYPE.APP].includes(pkg.type)) {
+  if ([APPTYPE.APP].includes(pkg.type)) {
     output["filename"] = "[name].js";
     output["chunkFilename"] = "static/[name].chunk.js";
     output["publicPath"] = `${pkg.name}`;
@@ -64,9 +64,9 @@ function createOutput(pkg: PackageInfo) {
   return output;
 }
 
-export default function (pkg: PackageInfo, config: Config): Configuration {
+export default function (pkg: ApplicationInfo, config: Config): Configuration {
   const output = createOutput(pkg);
-  const alias = createAlias(pkg, config.commons);
+  const alias = createAlias(pkg, config.packages);
   const dev = [ENV.development].includes(config.env);
 
   return {

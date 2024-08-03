@@ -11,52 +11,54 @@ import { createReadStream } from "fs";
 import { zip } from "./compress";
 import run from "../webpack/run";
 import start from "../webpack/server";
-import Config, { PACKAGE_TYPE, PackageInfo } from "../config";
+import Config, { ApplicationInfo, APPTYPE } from "../config";
 import { ProxyConfigArrayItem } from "webpack-dev-server";
+import { get } from "lodash";
+import { App } from "./app";
 
 export class Package {
-  static syncType(type: PACKAGE_TYPE) {
+  static syncType(type: APPTYPE) {
     const map = {
-      server: [PACKAGE_TYPE.H5, PACKAGE_TYPE.WEB],
-      cos: [PACKAGE_TYPE.APP, PACKAGE_TYPE.TEMPLATE],
+      server: [APPTYPE.H5, APPTYPE.WEB],
+      cos: [APPTYPE.APP, APPTYPE.TEMPLATE],
     };
     return Object.entries(map)
       .filter(([, keys]) => keys.includes(type))
       .map(([key]) => key);
   }
 
-  static params(pkg: PackageInfo) {
-    const { type, zip, name, version } = pkg;
+  static params(pkg: ApplicationInfo) {
+    const { type, zip, name, hash, version } = pkg;
     const formdata = new FormData();
     formdata.append("file", createReadStream(zip));
     formdata.append("code", name);
     formdata.append("version", version);
     formdata.append("type", type);
+    formdata.append("hash", hash);
     return formdata;
   }
 
-  static syncAll(packages: Package[]) {
+  static syncAll(packages: App[]) {
     return packages.reduce((pre: Promise<IRes>, item) => {
       return pre.then(() => item.sync());
     }, Promise.resolve({ code: 500, message: "" }));
   }
 
-  static buildAll(packages: Package[]) {
+  static buildAll(packages: App[]) {
     return packages.reduce((pre: Promise<IRes>, item) => {
       return pre.then(() => item.build());
     }, Promise.resolve({ code: 500, message: "" }));
   }
 
-  static startAll(packages: Package[]) {
+  static startAll(packages: App[]) {
     return packages.reduce((pre: Promise<IRes>, item) => {
       return pre.then(() => item.start());
     }, Promise.resolve({ code: 500, message: "" }));
   }
 
   constructor(
-    private readonly option: PackageInfo,
-    private readonly config: Config,
-    private readonly credential: string
+    private readonly option: ApplicationInfo,
+    private readonly config: Config
   ) {
     this.hash = this.hash.bind(this);
     this.compress = this.compress.bind(this);
@@ -65,11 +67,11 @@ export class Package {
 
   get proxy(): ProxyConfigArrayItem[] {
     const data = this.option.proxy;
-    const targets = Array.from(new Set(data.map(item => item.target)));
+    const targets = Array.from(new Set(data.map((item) => item.target)));
     return targets.reduce((pre, item) => {
-      const context = data.filter((i) => i.target === item).map(i => i.path);
+      const context = data.filter((i) => i.target === item).map((i) => i.path);
       return pre.concat([{ context, target: item, changeOrigin: true }]);
-    },[] as ProxyConfigArrayItem[]);
+    }, [] as ProxyConfigArrayItem[]);
   }
 
   get name() {
@@ -80,7 +82,7 @@ export class Package {
     return this.option.version;
   }
 
-  hash() {
+  private hash() {
     return createPackageHash(this.option.output);
   }
 
@@ -97,22 +99,27 @@ export class Package {
   async sync() {
     const pkg = await this.compress();
     if (!pkg) return { code: 500, message: "" };
-    const { name, version, type, zip } = pkg;
-    const URL = `/package/add_package`;
+    const credential = get(this.config, "credential", "");
+    const { name, version, zip } = pkg;
+    const URL = `/upload/base/package`;
     const params = Package.params(pkg);
     const config = {
-      headers: { ...params.getHeaders(), credential: this.credential },
+      headers: { ...params.getHeaders(), credential },
     };
-    Logger.info('准备上传')
+    Logger.info("准备上传");
     Logger.info(`名称:${name}`);
     Logger.info(`版本:${version}`);
     Logger.info(`文件:${zip}`);
-    const task = createTask("bouncingBar",`${INFO_PREFIX}`,Logger.infoText('上传中......'));
+    const task = createTask(
+      "bouncingBar",
+      `${INFO_PREFIX}`,
+      Logger.infoText("上传中......")
+    );
     task.start();
     return api
       .post<any, IRes>(URL, params, config)
       .then((res) => {
-        task.succeed(Logger.infoText('上传完成'));
+        task.succeed(Logger.infoText("上传完成"));
         return res;
       })
       .catch(() => {
@@ -123,38 +130,37 @@ export class Package {
 
   async build() {
     const { name, type, version } = this.option;
-    Logger.info('开始打包');
+    Logger.info("开始打包");
     Logger.info(`环境:${this.config.env}`);
     Logger.info(`名称:${name}`);
     Logger.info(`类型:${type}`);
     Logger.info(`版本:${version}`);
-    const task = createTask("dots",INFO_PREFIX,`打包中...`);
+    const task = createTask("dots", INFO_PREFIX, `打包中...`);
     try {
       task.start();
       await run(this.option, this.config);
-      task.succeed('打包成功');
+      task.succeed("打包成功");
     } catch (error) {
       console.log(error);
-      task.fail('打包失败');
+      task.fail("打包失败");
     }
   }
 
   async start() {
     const { name, type, version } = this.option;
-    Logger.info('开始启动');
+    Logger.info("开始启动");
     Logger.info(`环境:${this.config.env}`);
     Logger.info(`名称:${name}`);
     Logger.info(`类型:${type}`);
     Logger.info(`版本:${version}`);
-    const task = createTask("dots",INFO_PREFIX,`启动中...`);
+    const task = createTask("dots", INFO_PREFIX, `启动中...`);
     try {
       task.start();
       const server = await start(this.option, this.config, this.proxy);
       task.succeed("启动成功");
-      Logger.info(`地址: http://${server.host}:${server.port}`)
+      Logger.info(`地址: http://${server.host}:${server.port}`);
     } catch (error) {
-      console.log(error);
-      task.fail('启动失败');
+      task.fail("启动失败");
     }
   }
 }

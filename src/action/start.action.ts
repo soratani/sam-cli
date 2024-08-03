@@ -15,11 +15,11 @@ export class StartAction extends AbstractAction {
     try {
       Logger.info("准备启动");
       if (app) {
-        const pkg = config.packages.find((item) => item.name == app);
+        const pkg = config.apps.find((item) => item.name == app);
         if (!pkg) throw new Error("启动异常");
         return await pkg.start();
       }
-      await Package.startAll(config.packages);
+      await Package.startAll(config.apps);
     } catch (error) {
       Logger.error(error.message);
     }
