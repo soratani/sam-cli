@@ -5,7 +5,7 @@ import { Logger } from "@/utils/logger";
 import { ApplicationInfo, packageTypeMap } from "../config";
 
 export function zip(options: ApplicationInfo) {
-  const { name, version, hash, output, type, zip } = options;
+  const { name, version, hash, output, zip } = options;
   if (!existsSync(zip)) mkdirSync(zip, { recursive: true });
   const outputPath = join(zip, `${hash}.zip`);
   const outputStream = createWriteStream(outputPath);
@@ -19,7 +19,7 @@ export function zip(options: ApplicationInfo) {
     });
     outputStream.on("close", function () {
       Logger.info(`bytes:${archive.pointer()}`);
-      resolve({ ...options, type: packageTypeMap[type], zip: outputPath });
+      resolve({ ...options, zip: outputPath });
     });
     outputStream.on("end", function () {
       Logger.info(`${name}_${version}_${hash}.zip`);

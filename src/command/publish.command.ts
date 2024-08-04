@@ -3,10 +3,10 @@ import { get } from "lodash";
 import { AbstractCommand, Input } from "@/command";
 import Config from "@/common/config";
 
-export class CompressCommand extends AbstractCommand {
+export class PublishCommand extends AbstractCommand {
   public load(program: Command): void {
     program
-      .command("compress")
+      .command("publish")
       .description("压缩文件")
       .option(
         "-e, --env [env]",
