@@ -17,10 +17,10 @@ export class LoginAction extends AbstractAction {
     Logger.info("开始登录");
     try {
       const data = await api.post("/auth/login", { account, password });
-      const token = get(data, "data", "");
+      const token = get(data, "data.token", "");
       Logger.info(`TOKEN: ********`);
       const res = await api.post("/auth/credential", undefined, {
-        headers: { authorization: token },
+        headers: { authorization: `Bearer ${token}` },
       });
       const credential = get(res, "data", "");
       Logger.info(`令牌: ********`);

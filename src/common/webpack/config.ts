@@ -13,7 +13,7 @@ function optimization(pkg: ApplicationInfo) {
     minimizer: [
       new CssMinimizerWebpackPlugin(),
       new TerserWebpackPlugin({
-        parallel: true,
+        parallel: 2,
       }),
     ],
   };

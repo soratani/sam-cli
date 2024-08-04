@@ -32,7 +32,7 @@ import {
       formdata.append("file", createReadStream(zip));
       formdata.append("code", name);
       formdata.append("version", version);
-      formdata.append("type", type);
+      formdata.append("type", Number(type));
       formdata.append("hash", hash);
       return formdata;
     }
