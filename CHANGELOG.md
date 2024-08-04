@@ -1,5 +1,11 @@
 # @frade-sam/assets-cli
 
+## 0.1.14
+
+### Patch Changes
+
+- 09a8c90: 0.1.14
+
 ## 0.1.13
 
 ### Patch Changes
