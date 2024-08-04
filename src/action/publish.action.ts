@@ -4,7 +4,7 @@ import { Logger } from "@/utils";
 import { Package } from "@/common/file";
 import Config from "@/common/config";
 
-export class CompressAction extends AbstractAction {
+export class PublishAction extends AbstractAction {
   public async handle(
     inputs?: Input[],
     options?: Input[],
