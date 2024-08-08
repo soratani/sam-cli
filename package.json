@@ -1,6 +1,6 @@
 {
   "name": "@soratani-code/sam-cli",
-  "version": "0.1.14",
+  "version": "0.1.15",
   "description": "",
   "scripts": {
     "build": "rm -rf lib && tsc -p tsconfig.json && tsc-alias",
