@@ -73,7 +73,8 @@ export default function (pkg: ApplicationInfo, config: Config): Configuration {
     mode: dev ? "development" : "production", // 模式
     cache: true,
     entry: pkg.main,
-    devtool: dev ? "inline-source-map" : false,
+    devtool: "inline-source-map",
+    // devtool: dev ? "inline-source-map" : false,
     output,
     resolve: {
       extensions: [".js", ".jsx", ".ts", ".tsx", ".json"],
