@@ -3,7 +3,7 @@ import MiniCssExtractPlugin from "mini-css-extract-plugin";
 import HtmlWebpackPlugin from "html-webpack-plugin";
 import HtmlWebpackTagsPlugin from "html-webpack-tags-plugin";
 import CopyWebpackPlugin from "copy-webpack-plugin";
-import ModuleConcatenationPlugin from "webpack/lib/optimize/ModuleConcatenationPlugin";
+import CompressionPlugin from "compression-webpack-plugin";
 import webpack, { DefinePlugin } from "webpack";
 import EslintWebpackPlugin from "eslint-webpack-plugin";
 import dotenv from 'dotenv';
@@ -25,7 +25,7 @@ export default function createPlugins(pkg: ApplicationInfo, config: Config) {
   let cssFilename = "static/style/[name].[contenthash:8].css";
   let cssChunkFilename = "static/style/[id].[contenthash:8].chunk.css";
   let envObj = {
-    ENV: config.env,
+    NODE_ENV: config.env,
     VERSION: pkg.version,
     PLATFORM: pkg.env,
     APP: pkg.name,
@@ -64,7 +64,7 @@ export default function createPlugins(pkg: ApplicationInfo, config: Config) {
     filename: "index.html",
     inject: "head",
   });
-  const plugins = [
+  const plugins: any[] = [
     new CleanWebpackPlugin(),
     new EslintWebpackPlugin({
       context: pkg.root,
@@ -83,11 +83,15 @@ export default function createPlugins(pkg: ApplicationInfo, config: Config) {
       React: "react", // 这样在任何地方都可以直接使用React，无需import
       ReactDOM: "react-dom",
     }),
-    new ModuleConcatenationPlugin(),
+    // new ModuleConcatenationPlugin(),
   ];
   const isCssChunk = ![APPTYPE.APP].includes(pkg.type);
   const isTemplate = isCssChunk || [ENV.development].includes(config.env);
   const isCopy = isTemplate && pkg.public;
+  if (!isApp && ![ENV.development].includes(config.env)) plugins.push(new CompressionPlugin({
+    algorithm: 'gzip',
+    minRatio: 0.3
+  }));
   if (isCopy) plugins.push(copy);
   if (isTemplate) plugins.push(template);
   if (pkg.public && isTemplate) plugins.push(publicFiles);

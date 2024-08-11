@@ -13,33 +13,69 @@ function optimization(pkg: ApplicationInfo) {
     minimizer: [
       new CssMinimizerWebpackPlugin(),
       new TerserWebpackPlugin({
+        terserOptions: {
+          compress: {
+            drop_console: true, // 移除所有的`console`语句
+          },
+          output: {
+            comments: false, // 去掉注释
+          },
+        },
         parallel: 2,
       }),
     ],
   };
   if (![APPTYPE.APP].includes(pkg.type)) {
+    // opt["splitChunks"] = {
+    //   chunks: "all",
+    //   name: false,
+    //   cacheGroups: {
+    //     react: {
+    //       name: "react",
+    //       test: /[\\/]node_modules[\\/](react|react-dom|react-router-dom)[\\/]/,
+    //       priority: 10,
+    //       chunks: "all",
+    //     },
+    //     fingerprintjs: {
+    //       name: "fingerprintjs",
+    //       test: /[\\/]node_modules[\\/]@fingerprintjs[\\/]fingerprintjs[\\/]/,
+    //     },
+    //     common: {
+    //       name: "common",
+    //       minChunks: 2,
+    //       priority: 5,
+    //       chunks: "all",
+    //     },
+    //   },
+    // };
     opt["splitChunks"] = {
-      chunks: "all",
+      chunks: 'all',
       name: false,
+      minSize: 20000,
+      minRemainingSize: 0,
+      minChunks: 1,
+      maxAsyncRequests: 30,
+      maxInitialRequests: 30,
+      enforceSizeThreshold: 50000,
       cacheGroups: {
-        react: {
-          name: "react",
-          test: /[\\/]node_modules[\\/](react|react-dom|react-router-dom)[\\/]/,
-          priority: 10,
-          chunks: "all",
-        },
-        fingerprintjs: {
-          name: "fingerprintjs",
-          test: /[\\/]node_modules[\\/]@fingerprintjs[\\/]fingerprintjs[\\/]/,
-        },
         common: {
           name: "common",
           minChunks: 2,
           priority: 5,
           chunks: "all",
         },
+        defaultVendors: {
+          test: /[\\/]node_modules[\\/]/,
+          priority: -10,
+          reuseExistingChunk: true,
+        },
+        default: {
+          minChunks: 2,
+          priority: -20,
+          reuseExistingChunk: true,
+        },
       },
-    };
+    }
     opt["runtimeChunk"] = {
       name: (entrypoint) => `runtime-${entrypoint.name}`,
     };
@@ -68,13 +104,11 @@ export default function (pkg: ApplicationInfo, config: Config): Configuration {
   const output = createOutput(pkg);
   const alias = createAlias(pkg, config.packages);
   const dev = [ENV.development].includes(config.env);
-
   return {
     mode: dev ? "development" : "production", // 模式
     cache: true,
     entry: pkg.main,
-    devtool: "inline-source-map",
-    // devtool: dev ? "inline-source-map" : false,
+    devtool: dev ? "inline-source-map" : false,
     output,
     resolve: {
       extensions: [".js", ".jsx", ".ts", ".tsx", ".json"],
@@ -91,6 +125,6 @@ export default function (pkg: ApplicationInfo, config: Config): Configuration {
       maxEntrypointSize: 512000,
       maxAssetSize: 512000,
     },
-    stats: false,
+    stats: false
   };
 }
